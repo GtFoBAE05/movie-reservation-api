@@ -1,9 +1,13 @@
 package org.imannuel.moviereservationapi.service.impl;
 
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.imannuel.moviereservationapi.constant.SeedData;
 import org.imannuel.moviereservationapi.dto.mapper.MovieMapper;
 import org.imannuel.moviereservationapi.dto.request.movie.MovieRequest;
+import org.imannuel.moviereservationapi.dto.response.genre.GenreListResponse;
+import org.imannuel.moviereservationapi.dto.response.genre.GenreResponse;
 import org.imannuel.moviereservationapi.dto.response.movie.MovieListResponse;
 import org.imannuel.moviereservationapi.dto.response.movie.MovieResponse;
 import org.imannuel.moviereservationapi.entity.Movie;
@@ -17,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.Random;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -27,24 +32,31 @@ public class MovieServiceImpl implements MovieService {
     private final MovieRepository movieRepository;
     private final GenreService genreService;
 
+    @PostConstruct
+    @Transactional
+    public void init() {
+        GenreListResponse allGenre = genreService.getAllGenre();
+
+        SeedData.movieSeedData.stream()
+                .filter(movieRequest -> !movieRepository.existsMovieByName(movieRequest.getTitle()))
+                .peek(movieRequest -> {
+                    GenreResponse randomGenre = allGenre.getGenres().get(new Random().nextInt(allGenre.getGenres().size()));
+                    movieRequest.setGenres(List.of(randomGenre.getId()));
+                })
+                .forEach(movieRequest -> insertMovie(movieRequest));
+    }
+
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void insertMovie(MovieRequest movieRequest) {
-        Movie movie = Movie.builder()
-                .id(UUID.randomUUID())
-                .title(movieRequest.getTitle())
-                .description(movieRequest.getDescription())
-                .posterImage(movieRequest.getPosterImage())
-                .durationInMinutes(movieRequest.getDurationInMinute())
-                .releaseDate(DateParse.stringToLocalDate(movieRequest.getReleaseDate()))
-                .build();
+        Movie movie = MovieMapper.movieRequestToMovie(movieRequest);
+        movie.setId(UUID.randomUUID());
         movieRepository.insertMovie(movie);
 
         movieRequest.getGenres().forEach(aLong -> {
             genreService.findGenreById(aLong);
             insertMovieGenre(movie.getId(), aLong);
         });
-
     }
 
     @Override

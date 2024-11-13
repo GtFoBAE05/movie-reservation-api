@@ -34,8 +34,11 @@ public interface GenreRepository extends JpaRepository<Genre, Long> {
     @Query(value = "DELETE FROM m_genre where id = :id", nativeQuery = true)
     void deleteGenreById(@Param("id") Long id);
 
+    @Transactional
+    @Modifying
+    @Query(value = "DELETE FROM m_movie_genre WHERE genre_id = :id", nativeQuery = true)
+    void deleteGenre(@Param("id") Long id);
+
     @Query(value = "SELECT EXISTS (SELECT name FROM m_genre WHERE name ILIKE :name)", nativeQuery = true)
     boolean existsGenreByName(@Param("name") String name);
-
-
 }
