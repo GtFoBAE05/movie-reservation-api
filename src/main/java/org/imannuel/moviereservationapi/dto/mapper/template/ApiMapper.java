@@ -8,7 +8,7 @@ public class ApiMapper {
     public static <T> ResponseEntity<ApiResponse> basicMapper(HttpStatus httpStatus, String message, T data) {
         return ResponseEntity.status(httpStatus).body(
                 ApiResponse.builder()
-                        .httpStatus(httpStatus)
+                        .httpStatus(httpStatus.value())
                         .message(message)
                         .data(data)
                         .build()

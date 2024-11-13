@@ -9,16 +9,17 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
+import java.util.UUID;
 
 @Repository
-public interface UserAccountRepository extends JpaRepository<UserAccount, String> {
+public interface UserAccountRepository extends JpaRepository<UserAccount, UUID> {
     @Modifying
     @Transactional
     @Query(value = "INSERT INTO m_user (id, username, email, password, role_id) VALUES (:#{#userAccount.id}, :#{#userAccount.username}, :#{#userAccount.email}, :#{#userAccount.password}, :#{#userAccount.role.id})", nativeQuery = true)
     void insertUserAccount(@Param("userAccount") UserAccount userAccount);
 
     @Query(value = "SELECT id, username, email, password, role_id from m_user where id = :id", nativeQuery = true)
-    Optional<UserAccount> findUserAccountById(@Param("id") String id);
+    Optional<UserAccount> findUserAccountById(@Param("id") UUID id);
 
     @Query(value = "SELECT id, username, email, password, role_id from m_user where username = :username", nativeQuery = true)
     UserAccount findUserAccountByUsername(@Param("username") String username);
@@ -29,7 +30,7 @@ public interface UserAccountRepository extends JpaRepository<UserAccount, String
     @Transactional
     @Modifying
     @Query(value = "UPDATE m_user SET username = :username, email = :email WHERE id = :id", nativeQuery = true)
-    void updateUserAccount(String id, String username, String email);
+    void updateUserAccount(UUID id, String username, String email);
 
     @Transactional
     @Modifying
