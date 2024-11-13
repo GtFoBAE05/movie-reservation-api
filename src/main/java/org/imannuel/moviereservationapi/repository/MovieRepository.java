@@ -43,7 +43,6 @@ public interface MovieRepository extends JpaRepository<Movie, UUID> {
     @Query(value = "DELETE FROM m_movie_genre WHERE movie_id = :movieId AND genre_id IN :genreIds", nativeQuery = true)
     void deleteMovieGenreList(@Param("movieId") UUID movieId, @Param("genreIds") List<Long> genreIds);
 
-
     @Transactional
     @Modifying
     @Query(value = "UPDATE  m_movie SET  " +
@@ -70,4 +69,7 @@ public interface MovieRepository extends JpaRepository<Movie, UUID> {
     @Modifying
     @Query(value = "DELETE FROM m_movie WHERE id = :id", nativeQuery = true)
     void deleteMovieById(@Param("id") UUID id);
+
+    @Query(value = "SELECT EXISTS (SELECT title from m_movie where title = :title)", nativeQuery = true)
+    boolean existsMovieByName(@Param("title") String title);
 }

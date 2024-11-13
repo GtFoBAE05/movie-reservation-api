@@ -22,9 +22,9 @@ public class GenreServiceImpl implements GenreService {
 
     @PostConstruct
     @Transactional(rollbackFor = Exception.class)
-    public void initGenre(){
+    public void initGenre() {
         SeedData.genreSeedData.forEach(s -> {
-            if(!checkIsGenreExists(s)){
+            if (!checkIsGenreExists(s)) {
                 insertGenre(Genre.builder()
                         .name(s)
                         .build());
@@ -40,7 +40,7 @@ public class GenreServiceImpl implements GenreService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void createGenre(GenreRequest genreRequest) {
-        if (genreRepository.existsGenreByName(genreRequest.getName())){
+        if (genreRepository.existsGenreByName(genreRequest.getName())) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Genre already exists");
         }
         genreRepository.insertGenre(genreRequest.getName());
@@ -71,6 +71,7 @@ public class GenreServiceImpl implements GenreService {
     @Transactional(rollbackFor = Exception.class)
     public void deleteGenre(Long id) {
         findGenreById(id);
+        genreRepository.deleteGenre(id);
         genreRepository.deleteGenreById(id);
     }
 
