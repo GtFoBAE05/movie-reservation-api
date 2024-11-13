@@ -2,7 +2,6 @@ package org.imannuel.moviereservationapi.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.imannuel.moviereservationapi.constant.RoleEnum;
-import org.imannuel.moviereservationapi.dto.request.auth.PromoteToAdminRequest;
 import org.imannuel.moviereservationapi.dto.request.user.UpdateUserRequest;
 import org.imannuel.moviereservationapi.entity.Role;
 import org.imannuel.moviereservationapi.entity.UserAccount;
@@ -31,7 +30,7 @@ public class UserAccountServiceImpl implements UserAccountService {
     public void createUserAccount(UserAccount userAccount) {
         Role role = roleService.getRoleByName(RoleEnum.ROLE_USER.name());
         UUID uuid = UUID.randomUUID();
-        userAccount.setId(uuid.toString());
+        userAccount.setId(uuid);
         userAccount.setRole(role);
         userAccount.setPassword(passwordEncoder.encode(userAccount.getPassword()));
         userAccountRepository.insertUserAccount(userAccount);
@@ -43,7 +42,7 @@ public class UserAccountServiceImpl implements UserAccountService {
     }
 
     public UserAccount findUserAccountById(String id) {
-        return userAccountRepository.findUserAccountById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+        return userAccountRepository.findUserAccountById(UUID.fromString(id)).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
     }
 
     @Override
@@ -54,13 +53,13 @@ public class UserAccountServiceImpl implements UserAccountService {
     }
 
     @Override
-    public void updateRoleToAdmin(PromoteToAdminRequest promoteToAdminRequest) {
-        UserAccount userAccount = findUserAccountById(promoteToAdminRequest.getAccountId());
+    public void updateRoleToAdmin(String id) {
+        UserAccount userAccount = findUserAccountById(id);
         Role role = roleService.getRoleByName(RoleEnum.ROLE_ADMIN.name());
         if (userAccount.getRole().getName().equals(role.getName())) {
             throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "User role already admin");
         }
-        userAccountRepository.updateRoleToAdmin(promoteToAdminRequest.getAccountId(), role.getId());
+        userAccountRepository.updateRoleToAdmin(id, role.getId());
     }
 
     @Override

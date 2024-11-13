@@ -3,7 +3,6 @@ package org.imannuel.moviereservationapi.controller;
 import lombok.RequiredArgsConstructor;
 import org.imannuel.moviereservationapi.constant.Constant;
 import org.imannuel.moviereservationapi.dto.mapper.template.ApiMapper;
-import org.imannuel.moviereservationapi.dto.request.auth.PromoteToAdminRequest;
 import org.imannuel.moviereservationapi.dto.request.user.UpdateUserRequest;
 import org.imannuel.moviereservationapi.service.UserAccountService;
 import org.springframework.http.HttpStatus;
@@ -16,11 +15,11 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
     private final UserAccountService userAccountService;
 
-    @PostMapping("/promote")
+    @PostMapping("/{id}/promote")
     public ResponseEntity promoteToAdmin(
-            @RequestBody PromoteToAdminRequest promoteToAdminRequest
-    ) {
-        userAccountService.updateRoleToAdmin(promoteToAdminRequest);
+            @PathVariable("id") String id
+     ) {
+        userAccountService.updateRoleToAdmin(id);
         return ApiMapper.basicMapper(HttpStatus.OK, "Success promote user to admin", null);
     }
 
