@@ -21,7 +21,7 @@ public class CustomAuthEntryPoint implements AuthenticationEntryPoint {
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException {
         ApiResponse<?> apiResponse = new ApiResponse<>(
-                HttpStatus.FORBIDDEN,
+                HttpStatus.FORBIDDEN.value(),
                 authException.getMessage(),
                 null
         );

@@ -40,7 +40,7 @@ public class JwtServiceImpl implements JwtService {
             return JWT.create()
                     .withExpiresAt(Instant.now().plus(EXPIRATION_IN_MINUTES, ChronoUnit.MINUTES))
                     .withIssuer(ISSUER)
-                    .withSubject(userAccount.getId())
+                    .withSubject(userAccount.getId().toString())
                     .withClaim("role", userAccount.getRole().getName().toString())
                     .sign(algorithm);
         } catch (JWTCreationException e) {
