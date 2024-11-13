@@ -9,7 +9,7 @@ import org.springframework.http.HttpStatus;
 @NoArgsConstructor
 @Builder
 public class ApiResponse<T> {
-    private HttpStatus httpStatus;
+    private Integer httpStatus;
 
     private String message;
 
