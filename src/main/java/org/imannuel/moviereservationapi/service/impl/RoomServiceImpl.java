@@ -22,13 +22,13 @@ import java.util.List;
 public class RoomServiceImpl implements RoomService {
     private final RoomRepository roomRepository;
 
-    @PostConstruct
-    @Transactional(rollbackFor = Exception.class)
-    public void init() {
-        SeedData.roomSeedData.stream().filter(
-                s -> !checkIsRoomExists(s)
-        ).forEach(s -> createRoom(new RoomRequest(s)));
-    }
+//    @PostConstruct
+//    @Transactional(rollbackFor = Exception.class)
+//    public void init() {
+//        SeedData.roomSeedData.stream().filter(
+//                s -> !checkIsRoomExists(s)
+//        ).forEach(s -> createRoom(new RoomRequest(s)));
+//    }
 
     @Override
     @Transactional(rollbackFor = Exception.class)

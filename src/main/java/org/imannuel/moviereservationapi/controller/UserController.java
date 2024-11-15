@@ -7,6 +7,7 @@ import org.imannuel.moviereservationapi.dto.request.user.UpdateUserRequest;
 import org.imannuel.moviereservationapi.service.UserAccountService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -16,6 +17,7 @@ public class UserController {
     private final UserAccountService userAccountService;
 
     @PostMapping("/{id}/promote")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity promoteToAdmin(
             @PathVariable("id") String id
      ) {
@@ -23,7 +25,7 @@ public class UserController {
         return ApiMapper.basicMapper(HttpStatus.OK, "Success promote user to admin", null);
     }
 
-    @PutMapping()
+    @PutMapping
     public ResponseEntity updateUserAccount(
             @RequestBody UpdateUserRequest updateUserRequest
     ) {

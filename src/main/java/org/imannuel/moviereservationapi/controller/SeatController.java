@@ -7,6 +7,7 @@ import org.imannuel.moviereservationapi.dto.response.Seat.SeatListResponse;
 import org.imannuel.moviereservationapi.service.SeatService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -16,6 +17,7 @@ public class SeatController {
     private final SeatService seatService;
 
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity createSeat(
             @RequestBody SeatRequest seatRequest
     ) {
@@ -32,6 +34,7 @@ public class SeatController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity updateSeat(
             @PathVariable(name = "id") String id,
             @RequestBody SeatRequest seatRequest
@@ -41,6 +44,7 @@ public class SeatController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity deleteSeat(
             @PathVariable(name = "id") String id
     ) {

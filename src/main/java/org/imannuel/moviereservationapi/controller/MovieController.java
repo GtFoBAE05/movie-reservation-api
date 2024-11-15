@@ -8,6 +8,7 @@ import org.imannuel.moviereservationapi.dto.response.movie.MovieResponse;
 import org.imannuel.moviereservationapi.service.MovieService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -17,6 +18,7 @@ public class MovieController {
     private final MovieService movieService;
 
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity createMovie(
             @RequestBody MovieRequest movieRequest
     ) {
@@ -24,7 +26,7 @@ public class MovieController {
         return ApiMapper.basicMapper(HttpStatus.CREATED, "Success create movie", null);
     }
 
-    @GetMapping()
+    @GetMapping
     public ResponseEntity searchMovie(
             @RequestParam(value = "title", required = false) String title
     ) {
@@ -41,6 +43,7 @@ public class MovieController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity updateMovie(
             @PathVariable("id") String id,
             @RequestBody MovieRequest movieRequest
@@ -50,6 +53,7 @@ public class MovieController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity deleteMovie(
             @PathVariable("id") String id
     ) {

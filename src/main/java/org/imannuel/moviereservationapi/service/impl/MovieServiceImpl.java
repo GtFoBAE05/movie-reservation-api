@@ -32,19 +32,19 @@ public class MovieServiceImpl implements MovieService {
     private final MovieRepository movieRepository;
     private final GenreService genreService;
 
-    @PostConstruct
-    @Transactional
-    public void init() {
-        GenreListResponse allGenre = genreService.getAllGenre();
-
-        SeedData.movieSeedData.stream()
-                .filter(movieRequest -> !movieRepository.existsMovieByName(movieRequest.getTitle()))
-                .peek(movieRequest -> {
-                    GenreResponse randomGenre = allGenre.getGenres().get(new Random().nextInt(allGenre.getGenres().size()));
-                    movieRequest.setGenres(List.of(randomGenre.getId()));
-                })
-                .forEach(movieRequest -> insertMovie(movieRequest));
-    }
+//    @PostConstruct
+//    @Transactional
+//    public void init() {
+//        GenreListResponse allGenre = genreService.getAllGenre();
+//
+//        SeedData.movieSeedData.stream()
+//                .filter(movieRequest -> !movieRepository.existsMovieByName(movieRequest.getTitle()))
+//                .peek(movieRequest -> {
+//                    GenreResponse randomGenre = allGenre.getGenres().get(new Random().nextInt(allGenre.getGenres().size()));
+//                    movieRequest.setGenres(List.of(randomGenre.getId()));
+//                })
+//                .forEach(movieRequest -> insertMovie(movieRequest));
+//    }
 
     @Override
     @Transactional(rollbackFor = Exception.class)

@@ -109,4 +109,10 @@ public class ReservationServiceImpl implements ReservationService {
         List<Reservation> reservationByUserId = reservationRepository.getAllReservationByUserId(userAccount.getId());
         return ReservationMapper.reservationListToReservationListResponse(reservationByUserId);
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public boolean existsByReservationIdAndUserAccountId(String reservationId, String userAccountId) {
+        return reservationRepository.existsByReservationIdIdAndUserAccountId(UUID.fromString(reservationId), UUID.fromString(userAccountId));
+    }
 }

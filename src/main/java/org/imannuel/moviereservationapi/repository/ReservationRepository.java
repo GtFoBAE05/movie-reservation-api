@@ -67,4 +67,10 @@ public interface ReservationRepository extends JpaRepository<Reservation, UUID> 
     @Transactional(readOnly = true)
     @Query(value = "SELECT id, showtime_id, user_id, is_cancel FROM t_reservation WHERE user_id = :userId", nativeQuery = true)
     List<Reservation> getAllReservationByUserId(@Param("userId") UUID userId);
+
+    @Transactional(readOnly = true)
+    @Query(value = "SELECT EXISTS(SELECT 1 FROM t_reservation WHERE user_id = :userId AND id = :reservationId)", nativeQuery = true)
+    boolean existsByReservationIdIdAndUserAccountId(@Param("reservationId")UUID reservationId, @Param("userId") UUID userId);
+
+
 }
