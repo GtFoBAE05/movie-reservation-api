@@ -19,7 +19,7 @@ public class MovieResponse {
 
     private Integer durationInMinute;
 
-    private String posterImage;
+    private List<String> posterImage;
 
     private List<GenreResponse> genres;
 
