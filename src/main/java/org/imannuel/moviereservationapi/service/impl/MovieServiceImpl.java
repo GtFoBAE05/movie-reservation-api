@@ -1,27 +1,25 @@
 package org.imannuel.moviereservationapi.service.impl;
 
-import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.imannuel.moviereservationapi.constant.SeedData;
 import org.imannuel.moviereservationapi.dto.mapper.MovieMapper;
-import org.imannuel.moviereservationapi.dto.request.movie.MovieRequest;
-import org.imannuel.moviereservationapi.dto.response.genre.GenreListResponse;
-import org.imannuel.moviereservationapi.dto.response.genre.GenreResponse;
 import org.imannuel.moviereservationapi.dto.response.movie.MovieListResponse;
 import org.imannuel.moviereservationapi.dto.response.movie.MovieResponse;
 import org.imannuel.moviereservationapi.entity.Movie;
+import org.imannuel.moviereservationapi.entity.MovieImage;
 import org.imannuel.moviereservationapi.repository.MovieRepository;
 import org.imannuel.moviereservationapi.service.GenreService;
+import org.imannuel.moviereservationapi.service.MovieImageService;
 import org.imannuel.moviereservationapi.service.MovieService;
 import org.imannuel.moviereservationapi.utils.DateParse;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.Arrays;
 import java.util.List;
-import java.util.Random;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -30,6 +28,7 @@ import java.util.stream.Collectors;
 @Slf4j
 public class MovieServiceImpl implements MovieService {
     private final MovieRepository movieRepository;
+    private final MovieImageService movieImageService;
     private final GenreService genreService;
 
 //    @PostConstruct
@@ -48,14 +47,25 @@ public class MovieServiceImpl implements MovieService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void insertMovie(MovieRequest movieRequest) {
-        Movie movie = MovieMapper.movieRequestToMovie(movieRequest);
-        movie.setId(UUID.randomUUID());
+    public void insertMovie(List<MultipartFile> multipartFiles, String title, String description,
+                            Integer durationInMinute, String genres, String releaseDate) {
+        Movie movie = Movie.builder()
+                .id(UUID.randomUUID())
+                .title(title)
+                .description(description)
+                .durationInMinutes(durationInMinute)
+                .releaseDate(DateParse.stringToLocalDate(releaseDate))
+                .build();
         movieRepository.insertMovie(movie);
 
-        movieRequest.getGenres().forEach(aLong -> {
-            genreService.findGenreById(aLong);
-            insertMovieGenre(movie.getId(), aLong);
+        if (multipartFiles != null && !multipartFiles.isEmpty()) {
+            List<MovieImage> menuImages = movieImageService.createMovieImageBulk(multipartFiles, movie);
+            movie.setImages(menuImages);
+        }
+
+        Arrays.stream(genres.split(",")).toList().forEach(aLong -> {
+            genreService.findGenreById(Long.parseLong(aLong));
+            insertMovieGenre(movie.getId(), Long.parseLong(aLong));
         });
     }
 
@@ -66,18 +76,24 @@ public class MovieServiceImpl implements MovieService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void updateMovieById(String id, MovieRequest movieRequest) {
+    public void updateMovieById(String id, List<MultipartFile> multipartFiles, String title, String description,
+                                Integer durationInMinute, String genres, String releaseDate) {
         Movie movie = findMovieById(id);
 
-        movie.setTitle(movieRequest.getTitle());
-        movie.setDescription(movieRequest.getDescription());
-        movie.setDurationInMinutes(movieRequest.getDurationInMinute());
-        movie.setPosterImage(movieRequest.getPosterImage());
-        movie.setReleaseDate(DateParse.stringToLocalDate(movieRequest.getReleaseDate()));
+        movie.setTitle(title);
+        movie.setDescription(description);
+        movie.setDurationInMinutes(durationInMinute);
+        movie.setReleaseDate(DateParse.stringToLocalDate(releaseDate));
         movieRepository.updateMovieById(movie);
 
-        movieRepository.removeGenresNotInList(movie.getId(), movieRequest.getGenres());
-        movieRepository.addGenresList(movie.getId(), movieRequest.getGenres());
+        if (multipartFiles != null && !multipartFiles.isEmpty()) {
+            List<MovieImage> menuImages = movieImageService.createMovieImageBulk(multipartFiles, movie);
+            movie.getImages().addAll(menuImages);
+        }
+
+        List<Long> genreMappedList = Arrays.stream(genres.split(",")).map(s -> Long.parseLong(s)).toList();
+        movieRepository.removeGenresNotInList(movie.getId(), genreMappedList);
+        movieRepository.addGenresList(movie.getId(), genreMappedList);
     }
 
     @Override
@@ -106,8 +122,27 @@ public class MovieServiceImpl implements MovieService {
                 .map(genre -> genre.getId())
                 .collect(Collectors.toList());
 
+        if (movie.getImages() != null && !movie.getImages().isEmpty()) {
+            movie.getImages().stream().forEach(
+                    movieImage -> deleteMovieImage(id)
+            );
+        }
+
         movieRepository.deleteMovieGenreList(movie.getId(), genreList);
         movieRepository.deleteMovieById(UUID.fromString(id));
     }
+
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public void updateMovieImage(String imageId, MultipartFile file) {
+        movieImageService.updateMovieImage(imageId, file);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public void deleteMovieImage(String id) {
+        movieImageService.deleteMovieImageById(id);
+    }
+
 
 }

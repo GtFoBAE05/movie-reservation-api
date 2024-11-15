@@ -28,8 +28,9 @@ public class Movie {
     @Column(name = "duration_in_minutes", nullable = false)
     private Integer durationInMinutes;
 
-    @Column(name = "poster_image", nullable = false)
-    private String posterImage;
+    @OneToMany(mappedBy = "movie",  orphanRemoval = true)
+    private List<MovieImage> images;
+
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(

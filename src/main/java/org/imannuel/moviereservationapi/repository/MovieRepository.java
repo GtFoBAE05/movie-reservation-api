@@ -16,8 +16,8 @@ import java.util.UUID;
 public interface MovieRepository extends JpaRepository<Movie, UUID> {
     @Transactional
     @Modifying
-    @Query(value = "INSERT INTO  m_movie(id, title, description, duration_in_minutes, poster_image, release_date) " +
-            "VALUES (:#{#movie.id}, :#{#movie.title}, :#{#movie.description}, :#{#movie.durationInMinutes}, :#{#movie.posterImage}, :#{#movie.releaseDate})", nativeQuery = true)
+    @Query(value = "INSERT INTO  m_movie(id, title, description, duration_in_minutes, release_date) " +
+            "VALUES (:#{#movie.id}, :#{#movie.title}, :#{#movie.description}, :#{#movie.durationInMinutes}, :#{#movie.releaseDate})", nativeQuery = true)
     void insertMovie(@Param("movie") Movie movie);
 
     @Transactional
@@ -49,20 +49,19 @@ public interface MovieRepository extends JpaRepository<Movie, UUID> {
             "title = :#{#movie.title}, " +
             "description = :#{#movie.description}, " +
             "duration_in_minutes = :#{#movie.durationInMinutes}, " +
-            "poster_image = :#{#movie.posterImage}, " +
             "release_date = :#{#movie.releaseDate} " +
             "WHERE id = :#{#movie.id}", nativeQuery = true)
     void updateMovieById(@Param("movie") Movie movie);
 
-    @Query(value = "SELECT m.id, m.title, m.description, m.poster_image, m.release_date, m.duration_in_minutes, " +
+    @Query(value = "SELECT m.id, m.title, m.description, m.release_date, m.duration_in_minutes, " +
             "mg.genre_id " +
             "FROM m_movie m " +
             "JOIN m_movie_genre mg ON m.id = mg.movie_id " +
             "WHERE m.id = :id", nativeQuery = true)
     Optional<Movie> findMovieById(@Param("id") UUID id);
 
-    @Query(value = "SELECT m.id, m.title, m.description, m.poster_image, m.release_date, m.duration_in_minutes " +
-            "FROM m_movie m where m.title LIKE CONCAT(:title, '%')",nativeQuery = true)
+    @Query(value = "SELECT m.id, m.title, m.description, m.release_date, m.duration_in_minutes " +
+            "FROM m_movie m where m.title LIKE CONCAT(:title, '%')", nativeQuery = true)
     List<Movie> getAllMovie(@Param("title") String title);
 
     @Transactional
