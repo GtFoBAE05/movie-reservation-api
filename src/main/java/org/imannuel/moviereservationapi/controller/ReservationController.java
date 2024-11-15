@@ -8,6 +8,7 @@ import org.imannuel.moviereservationapi.dto.response.reservation.ReservationResp
 import org.imannuel.moviereservationapi.service.ReservationService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -25,6 +26,7 @@ public class ReservationController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN') or (hasRole('USER') and @permissionEvaluationServiceImpl.hasAccessToReservation(#id, authentication.principal.id))")
     public ResponseEntity cancelReservation(
             @PathVariable("id") String id
     ) {

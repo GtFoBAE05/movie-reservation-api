@@ -9,6 +9,7 @@ import org.imannuel.moviereservationapi.dto.response.showtime.ShowtimeResponse;
 import org.imannuel.moviereservationapi.service.ShowtimeService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -18,6 +19,7 @@ public class ShowtimeController {
     private final ShowtimeService showtimeService;
 
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity createShowtime(
             @RequestBody ShowtimeRequest showtimeRequest
     ) {
@@ -26,6 +28,7 @@ public class ShowtimeController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity updateShowtime(
             @PathVariable(name = "id") String id,
             @RequestBody ShowtimeRequest showtimeRequest

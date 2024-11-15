@@ -8,6 +8,7 @@ import org.imannuel.moviereservationapi.dto.response.genre.GenreResponse;
 import org.imannuel.moviereservationapi.service.GenreService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -17,6 +18,7 @@ public class GenreController {
     private final GenreService genreService;
 
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity createGenre(
             @RequestBody GenreRequest genreRequest
     ) {
@@ -39,6 +41,7 @@ public class GenreController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity updateGenre(
             @PathVariable(name = "id") Long id,
             @RequestBody GenreRequest genreRequest
@@ -48,6 +51,7 @@ public class GenreController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity deleteGenre(
             @PathVariable(name = "id") Long id
     ) {

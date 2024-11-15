@@ -8,6 +8,7 @@ import org.imannuel.moviereservationapi.dto.response.room.RoomResponse;
 import org.imannuel.moviereservationapi.service.RoomService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -17,6 +18,7 @@ public class RoomController {
     private final RoomService roomService;
 
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity createRoom(
             @RequestBody RoomRequest roomRequest
     ) {
@@ -39,6 +41,7 @@ public class RoomController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity updateRoom(
             @PathVariable("id") Long id,
             @RequestBody RoomRequest roomRequest
@@ -48,6 +51,7 @@ public class RoomController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity deleteRoom(
             @PathVariable("id") Long id
     ) {

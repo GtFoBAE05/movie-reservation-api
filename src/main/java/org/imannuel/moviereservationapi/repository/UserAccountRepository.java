@@ -22,7 +22,7 @@ public interface UserAccountRepository extends JpaRepository<UserAccount, UUID> 
     Optional<UserAccount> findUserAccountById(@Param("id") UUID id);
 
     @Query(value = "SELECT id, username, email, password, role_id from m_user where username = :username", nativeQuery = true)
-    UserAccount findUserAccountByUsername(@Param("username") String username);
+    Optional<UserAccount> findUserAccountByUsername(@Param("username") String username);
 
     @Query(value = "SELECT EXISTS(SELECT username from m_user where username = :username)", nativeQuery = true)
     boolean existsUserAccountByUsername(@Param("username") String username);

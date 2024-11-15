@@ -1,8 +1,6 @@
 package org.imannuel.moviereservationapi.service.impl;
 
-import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
-import org.imannuel.moviereservationapi.constant.SeedData;
 import org.imannuel.moviereservationapi.dto.mapper.GenreMapper;
 import org.imannuel.moviereservationapi.dto.request.genre.GenreRequest;
 import org.imannuel.moviereservationapi.dto.response.genre.GenreListResponse;
@@ -20,17 +18,17 @@ import org.springframework.web.server.ResponseStatusException;
 public class GenreServiceImpl implements GenreService {
     private final GenreRepository genreRepository;
 
-    @PostConstruct
-    @Transactional(rollbackFor = Exception.class)
-    public void initGenre() {
-        SeedData.genreSeedData.forEach(s -> {
-            if (!checkIsGenreExists(s)) {
-                insertGenre(Genre.builder()
-                        .name(s)
-                        .build());
-            }
-        });
-    }
+//    @PostConstruct
+//    @Transactional(rollbackFor = Exception.class)
+//    public void initGenre() {
+//        SeedData.genreSeedData.forEach(s -> {
+//            if (!checkIsGenreExists(s)) {
+//                insertGenre(Genre.builder()
+//                        .name(s)
+//                        .build());
+//            }
+//        });
+//    }
 
     @Transactional(rollbackFor = Exception.class)
     public void insertGenre(Genre genre) {

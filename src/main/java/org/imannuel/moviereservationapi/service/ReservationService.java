@@ -21,4 +21,6 @@ public interface ReservationService {
     ReservationResponse getReservationById(String reservationId);
 
     ReservationListResponse getAllReservationByUserId();
+
+    boolean existsByReservationIdAndUserAccountId(String reservationId, String userAccountId);
 }
