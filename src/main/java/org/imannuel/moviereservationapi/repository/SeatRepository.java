@@ -14,27 +14,41 @@ import java.util.UUID;
 
 @Repository
 public interface SeatRepository extends JpaRepository<Seat, UUID> {
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     @Modifying
     @Query(value = "INSERT INTO m_seat(id, seat_code, room_id) VALUES (:#{#seat.id},:#{#seat.seatCode},:#{#seat.room.id})", nativeQuery = true)
     void insertSeat(@Param("seat") Seat seat);
 
+    @Transactional(readOnly = true)
     @Query(value = "SELECT id, seat_code, room_id from m_seat where id = :id", nativeQuery = true)
     Optional<Seat> findSeatById(@Param("id") UUID id);
 
+    @Transactional(readOnly = true)
     @Query(value = "SELECT id, seat_code, room_id from m_seat where room_id = :id", nativeQuery = true)
     List<Seat> findSeatByRoomId(@Param("id") Long id);
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     @Modifying
     @Query(value = "UPDATE m_seat SET seat_code = :#{#seat.seatCode}, room_id = :#{#seat.room.id} WHERE id = :#{#seat.id}", nativeQuery = true)
     void updateSeat(@Param("seat") Seat seat);
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     @Modifying
     @Query(value = "DELETE FROM m_seat WHERE id = :id ", nativeQuery = true)
     void deleteSeat(@Param("id") UUID id);
 
+    @Transactional(readOnly = true)
     @Query(value = "SELECT EXISTS(SELECT seat_code FROM m_seat WHERE seat_code = :seatCode AND room_id = :roomId)", nativeQuery = true)
     boolean seatExistsBySeatCode(@Param("seatCode") String seatCode, @Param("roomId") Long roomId);
+
+    @Transactional(readOnly = true)
+    @Query(value = "SELECT s.id, s.seat_code, s.room_id FROM m_seat s " +
+            "JOIN t_showtime ts ON ts.room_id = s.room_id " +
+            "JOIN m_room mr on s.room_id = mr.id " +
+            "WHERE ts.id = :showtimeId " +
+            "AND NOT EXISTS (" +
+            "SELECT 1 FROM t_seat_reservation sr " +
+            "WHERE sr.seat_id = s.id AND sr.reservation_id IS NOT NULL)",
+            nativeQuery = true)
+    List<Seat> getAvailableSeat(@Param("showtimeId") UUID showtimeId);
 }
