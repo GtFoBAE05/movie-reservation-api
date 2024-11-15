@@ -85,6 +85,11 @@ public class SeatServiceImpl implements SeatService {
     }
 
     @Override
+    public List<Seat> getAvailableSeatForShowtime(String showtimeId) {
+        return seatRepository.getAvailableSeat(UUID.fromString(showtimeId));
+    }
+
+    @Override
     public boolean checkIsSeatExists(String seatCode, Long roomId) {
         return seatRepository.seatExistsBySeatCode(seatCode, roomId);
     }
