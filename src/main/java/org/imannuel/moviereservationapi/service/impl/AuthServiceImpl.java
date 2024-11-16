@@ -8,6 +8,7 @@ import org.imannuel.moviereservationapi.entity.UserAccount;
 import org.imannuel.moviereservationapi.service.AuthService;
 import org.imannuel.moviereservationapi.service.JwtService;
 import org.imannuel.moviereservationapi.service.UserAccountService;
+import org.imannuel.moviereservationapi.utils.ValidationUtil;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -20,10 +21,12 @@ public class AuthServiceImpl implements AuthService {
     private final UserAccountService userAccountService;
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
-
+    private final ValidationUtil validationUtil;
 
     @Override
     public void register(RegisterRequest registerRequest) {
+        validationUtil.validate(registerRequest);
+
         UserAccount userAccount = UserAccount.builder()
                 .username(registerRequest.getUsername())
                 .email(registerRequest.getEmail())
@@ -34,6 +37,8 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public LoginResponse login(LoginRequest loginRequest) {
+        validationUtil.validate(loginRequest);
+
         Authentication authenticate = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         loginRequest.getUsername(),

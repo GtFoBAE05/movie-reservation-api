@@ -8,6 +8,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.InvalidDataAccessResourceUsageException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.server.ResponseStatusException;
@@ -57,6 +58,13 @@ public class ExceptionController {
 
     @ExceptionHandler({ConstraintViolationException.class})
     public ResponseEntity<ApiTemplateResponse> handlingConstraintViolationException(ConstraintViolationException e) {
+        return ApiMapper.basicMapper(
+                HttpStatus.BAD_REQUEST, e.getMessage(), null
+        );
+    }
+
+    @ExceptionHandler({MissingServletRequestParameterException.class})
+    public ResponseEntity<ApiTemplateResponse> handlingMissingServletRequestParameterExceptionn(MissingServletRequestParameterException e) {
         return ApiMapper.basicMapper(
                 HttpStatus.BAD_REQUEST, e.getMessage(), null
         );

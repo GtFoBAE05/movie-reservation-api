@@ -1,6 +1,8 @@
 package org.imannuel.moviereservationapi.service.impl;
 
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
+import org.imannuel.moviereservationapi.constant.SeedData;
 import org.imannuel.moviereservationapi.dto.mapper.RoomMapper;
 import org.imannuel.moviereservationapi.dto.request.room.RoomRequest;
 import org.imannuel.moviereservationapi.dto.response.room.RoomPageResponse;
@@ -9,6 +11,7 @@ import org.imannuel.moviereservationapi.entity.Room;
 import org.imannuel.moviereservationapi.repository.RoomRepository;
 import org.imannuel.moviereservationapi.service.RoomService;
 import org.imannuel.moviereservationapi.utils.PaginationUtil;
+import org.imannuel.moviereservationapi.utils.ValidationUtil;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,18 +23,21 @@ import java.util.List;
 @RequiredArgsConstructor
 public class RoomServiceImpl implements RoomService {
     private final RoomRepository roomRepository;
+    private final ValidationUtil validationUtil;
 
-//    @PostConstruct
-//    @Transactional(rollbackFor = Exception.class)
-//    public void init() {
-//        SeedData.roomSeedData.stream().filter(
-//                s -> !checkIsRoomExists(s)
-//        ).forEach(s -> createRoom(new RoomRequest(s)));
-//    }
+    @PostConstruct
+    @Transactional(rollbackFor = Exception.class)
+    public void init() {
+        SeedData.roomSeedData.stream().filter(
+                s -> !checkIsRoomExists(s)
+        ).forEach(s -> createRoom(new RoomRequest(s)));
+    }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void createRoom(RoomRequest roomRequest) {
+        validationUtil.validate(roomRequest);
+
         Room room = RoomMapper.roomRequestToRoom(roomRequest);
         roomRepository.insertRoom(room);
     }
@@ -72,6 +78,8 @@ public class RoomServiceImpl implements RoomService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void updateRoom(Long id, RoomRequest roomRequest) {
+        validationUtil.validate(roomRequest);
+
         Room room = findRoomById(id);
         room.setName(roomRequest.getName());
         roomRepository.updateRoom(room);

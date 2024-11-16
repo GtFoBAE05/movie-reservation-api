@@ -19,6 +19,7 @@ import org.imannuel.moviereservationapi.service.SeatService;
 import org.imannuel.moviereservationapi.service.ShowtimeService;
 import org.imannuel.moviereservationapi.utils.DateUtil;
 import org.imannuel.moviereservationapi.utils.PaginationUtil;
+import org.imannuel.moviereservationapi.utils.ValidationUtil;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,10 +36,13 @@ public class ShowtimeServiceImpl implements ShowtimeService {
     private final MovieService movieService;
     private final RoomService roomService;
     private final SeatService seatService;
+    private final ValidationUtil validationUtil;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void createShowtime(ShowtimeRequest showtimeRequest) {
+        validationUtil.validate(showtimeRequest);
+
         Showtime showtime = buildShowtime(showtimeRequest);
         showtime.setId(UUID.randomUUID());
         showtimeRepository.insertShowtime(showtime);
@@ -47,6 +51,8 @@ public class ShowtimeServiceImpl implements ShowtimeService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void updateShowtime(String id, ShowtimeRequest showtimeRequest) {
+        validationUtil.validate(showtimeRequest);
+
         findShowtimeById(id);
         checkIsShowtimeUpdateable(id);
         Showtime showtime = buildShowtime(showtimeRequest);
