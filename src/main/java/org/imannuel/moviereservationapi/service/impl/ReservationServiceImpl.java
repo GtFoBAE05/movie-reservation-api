@@ -16,6 +16,7 @@ import org.imannuel.moviereservationapi.service.PaymentService;
 import org.imannuel.moviereservationapi.service.ReservationService;
 import org.imannuel.moviereservationapi.service.ShowtimeService;
 import org.imannuel.moviereservationapi.utils.PaginationUtil;
+import org.imannuel.moviereservationapi.utils.ValidationUtil;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -31,12 +32,14 @@ import java.util.UUID;
 public class ReservationServiceImpl implements ReservationService {
     private final ReservationRepository reservationRepository;
     private final PaymentService paymentService;
-
     private final ShowtimeService showtimeService;
+    private final ValidationUtil validationUtil;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public PaymentResponse createReservation(ReservationRequest reservationRequest) {
+        validationUtil.validate(reservationRequest);
+
         if (!showtimeService.checkIsShowtimeIsReserveable(reservationRequest.getShowtimeId())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Showtime is not reserveable");
         }
