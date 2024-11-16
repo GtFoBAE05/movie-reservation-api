@@ -5,6 +5,8 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import org.imannuel.moviereservationapi.dto.mapper.template.ApiMapper;
 import org.imannuel.moviereservationapi.dto.response.movie.MoviePageResponse;
@@ -40,11 +42,11 @@ public class MovieController {
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity createMovie(
             @RequestParam(name = "images", required = false) List<MultipartFile> multipartFiles,
-            @RequestParam(name = "title") String title,
-            @RequestParam(name = "description") String description,
-            @RequestParam(name = "durationInMinute") Integer durationInMinute,
-            @RequestParam(name = "genres") List<Long>  genres,
-            @RequestParam(name = "releaseDate") String releaseDate
+            @Valid @NotBlank(message = "title is required") @RequestParam(name = "title") String title,
+            @Valid @NotBlank(message = "description is required") @RequestParam(name = "description") String description,
+            @Valid @NotBlank(message = "durationInMinute is required") @RequestParam(name = "durationInMinute") Integer durationInMinute,
+            @Valid @NotBlank(message = "genres is required") @RequestParam(name = "genres") List<Long>  genres,
+            @Valid @NotBlank(message = "releaseDate is required") @RequestParam(name = "releaseDate") String releaseDate
     ) {
         movieService.insertMovie(multipartFiles, title, description, durationInMinute, genres, releaseDate);
         return ApiMapper.basicMapper(HttpStatus.CREATED, "Successfully created movie", null);
@@ -101,11 +103,11 @@ public class MovieController {
     public ResponseEntity updateMovie(
             @PathVariable("id") String id,
             @RequestParam(name = "images", required = false) List<MultipartFile> multipartFiles,
-            @RequestParam(name = "title") String title,
-            @RequestParam(name = "description") String description,
-            @RequestParam(name = "durationInMinute") Integer durationInMinute,
-            @RequestParam(name = "genres") List<Long> genres,
-            @RequestParam(name = "releaseDate") String releaseDate
+            @Valid @NotBlank(message = "title is required") @RequestParam(name = "title") String title,
+            @Valid @NotBlank(message = "description is required") @RequestParam(name = "description") String description,
+            @Valid @NotBlank(message = "durationInMinute is required") @RequestParam(name = "durationInMinute") Integer durationInMinute,
+            @Valid @NotBlank(message = "genres is required") @RequestParam(name = "genres") List<Long>  genres,
+            @Valid @NotBlank(message = "releaseDate is required") @RequestParam(name = "releaseDate") String releaseDate
     ) {
         movieService.updateMovieById(id, multipartFiles, title, description, durationInMinute, genres, releaseDate);
         return ApiMapper.basicMapper(HttpStatus.OK, "Successfully updated movie", null);
