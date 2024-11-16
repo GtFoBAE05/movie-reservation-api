@@ -16,6 +16,6 @@ public class ReservationMapper {
     }
 
     public static List<ReservationResponse> reservationListToReservationListResponse(List<Reservation> reservations) {
-        return reservations.stream().map(reservation -> reservationToReservationResponse(reservation)).toList();
+        return reservations.stream().map(ReservationMapper::reservationToReservationResponse).toList();
     }
 }

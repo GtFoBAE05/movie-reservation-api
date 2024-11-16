@@ -5,7 +5,7 @@ import org.imannuel.moviereservationapi.entity.Payment;
 
 
 public class PaymentMapper {
-    public static PaymentResponse paymentToPaymentResponse(Payment payment){
+    public static PaymentResponse paymentToPaymentResponse(Payment payment) {
         return PaymentResponse.builder()
                 .reservationId(payment.getReservation().getId().toString())
                 .redirectUrl(payment.getRedirectUrl())

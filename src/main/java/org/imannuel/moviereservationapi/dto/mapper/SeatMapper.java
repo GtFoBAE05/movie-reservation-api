@@ -17,7 +17,7 @@ public class SeatMapper {
     public static SeatListResponse seatListToSeatListResponse(List<Seat> seats) {
         return SeatListResponse.builder()
                 .seats(seats.stream().map(
-                        seat -> seatToSeatResponse(seat)
+                        SeatMapper::seatToSeatResponse
                 ).toList())
                 .build();
     }
