@@ -1,14 +1,18 @@
 package org.imannuel.moviereservationapi.service.impl;
 
 import lombok.RequiredArgsConstructor;
+import org.imannuel.moviereservationapi.dto.mapper.PaymentMapper;
 import org.imannuel.moviereservationapi.dto.mapper.ReservationMapper;
 import org.imannuel.moviereservationapi.dto.request.reservation.ReservationRequest;
+import org.imannuel.moviereservationapi.dto.response.payment.PaymentResponse;
 import org.imannuel.moviereservationapi.dto.response.reservation.ReservationListResponse;
 import org.imannuel.moviereservationapi.dto.response.reservation.ReservationResponse;
+import org.imannuel.moviereservationapi.entity.Payment;
 import org.imannuel.moviereservationapi.entity.Reservation;
 import org.imannuel.moviereservationapi.entity.Showtime;
 import org.imannuel.moviereservationapi.entity.UserAccount;
 import org.imannuel.moviereservationapi.repository.ReservationRepository;
+import org.imannuel.moviereservationapi.service.PaymentService;
 import org.imannuel.moviereservationapi.service.ReservationService;
 import org.imannuel.moviereservationapi.service.ShowtimeService;
 import org.springframework.http.HttpStatus;
@@ -25,11 +29,13 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class ReservationServiceImpl implements ReservationService {
     private final ReservationRepository reservationRepository;
+    private final PaymentService paymentService;
+
     private final ShowtimeService showtimeService;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void createReservation(ReservationRequest reservationRequest) {
+    public PaymentResponse createReservation(ReservationRequest reservationRequest) {
         if (!showtimeService.checkIsShowtimeIsReserveable(reservationRequest.getShowtimeId())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Showtime is not reserveable");
         }
@@ -52,6 +58,11 @@ public class ReservationServiceImpl implements ReservationService {
             }
             createSeatReservation(reservation.getId().toString(), seatId);
         }
+
+        Payment payment = paymentService.createPayment(reservation, reservationRequest);
+        reservation.setPayment(payment);
+        reservationRepository.updateReservationPayment(reservation);
+        return PaymentMapper.paymentToPaymentResponse(payment);
     }
 
     @Override
