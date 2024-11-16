@@ -8,6 +8,7 @@ import org.imannuel.moviereservationapi.entity.UserAccount;
 import org.imannuel.moviereservationapi.repository.UserAccountRepository;
 import org.imannuel.moviereservationapi.service.RoleService;
 import org.imannuel.moviereservationapi.service.UserAccountService;
+import org.imannuel.moviereservationapi.utils.ValidationUtil;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -25,6 +26,7 @@ public class UserAccountServiceImpl implements UserAccountService {
     private final UserAccountRepository userAccountRepository;
     private final PasswordEncoder passwordEncoder;
     private final RoleService roleService;
+    private final ValidationUtil validationUtil;
 
     @Override
     public void createUserAccount(UserAccount userAccount) {
@@ -47,6 +49,8 @@ public class UserAccountServiceImpl implements UserAccountService {
 
     @Override
     public void updateUserAccount(UpdateUserRequest updateUserRequest) {
+        validationUtil.validate(updateUserRequest);
+
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserAccount userAccount = (UserAccount) authentication.getPrincipal();
         userAccountRepository.updateUserAccount(userAccount.getId(), updateUserRequest.getUsername(), updateUserRequest.getEmail());
