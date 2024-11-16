@@ -9,7 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.imannuel.moviereservationapi.dto.mapper.template.ApiMapper;
 import org.imannuel.moviereservationapi.dto.request.reservation.ReservationRequest;
 import org.imannuel.moviereservationapi.dto.response.payment.PaymentResponse;
-import org.imannuel.moviereservationapi.dto.response.reservation.ReservationListResponse;
+import org.imannuel.moviereservationapi.dto.response.reservation.ReservationPageResponse;
 import org.imannuel.moviereservationapi.dto.response.reservation.ReservationResponse;
 import org.imannuel.moviereservationapi.dto.response.template.ApiTemplateResponse;
 import org.imannuel.moviereservationapi.service.ReservationService;
@@ -68,9 +68,13 @@ public class ReservationController {
             }
     )
     @GetMapping
-    public ResponseEntity getAllUserReservation() {
-        ReservationListResponse allReservationByUserId = reservationService.getAllReservationByUserId();
-        return ApiMapper.basicMapper(HttpStatus.OK, "Successfully retrieved all user reservations", allReservationByUserId);
+    public ResponseEntity getAllUserReservation(
+            @RequestParam(name = "page", required = false, defaultValue = "0") Integer page,
+            @RequestParam(name = "size", required = false, defaultValue = "10") Integer size
+    ) {
+        ReservationPageResponse reservationPageResponse = reservationService.getAllReservationByUserId(page, size);
+        return ApiMapper.paginationMapper(HttpStatus.OK, "Successfully retrieved all user reservations", reservationPageResponse.getReservations(),
+                reservationPageResponse.getTotalElements(), reservationPageResponse.getPageSize(), reservationPageResponse.getCurrentPage());
     }
 
     @Operation(
@@ -92,7 +96,7 @@ public class ReservationController {
     private static class PaymentDataResponse extends ApiTemplateResponse<PaymentResponse> {
     }
 
-    private static class ListReservationDataResponse extends ApiTemplateResponse<ReservationListResponse> {
+    private static class ListReservationDataResponse extends ApiTemplateResponse<ReservationPageResponse> {
     }
 
     private static class ReservationDataResponse extends ApiTemplateResponse<ReservationResponse> {

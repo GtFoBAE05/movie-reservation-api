@@ -5,7 +5,7 @@ import org.imannuel.moviereservationapi.dto.mapper.PaymentMapper;
 import org.imannuel.moviereservationapi.dto.mapper.ReservationMapper;
 import org.imannuel.moviereservationapi.dto.request.reservation.ReservationRequest;
 import org.imannuel.moviereservationapi.dto.response.payment.PaymentResponse;
-import org.imannuel.moviereservationapi.dto.response.reservation.ReservationListResponse;
+import org.imannuel.moviereservationapi.dto.response.reservation.ReservationPageResponse;
 import org.imannuel.moviereservationapi.dto.response.reservation.ReservationResponse;
 import org.imannuel.moviereservationapi.entity.Payment;
 import org.imannuel.moviereservationapi.entity.Reservation;
@@ -15,6 +15,7 @@ import org.imannuel.moviereservationapi.repository.ReservationRepository;
 import org.imannuel.moviereservationapi.service.PaymentService;
 import org.imannuel.moviereservationapi.service.ReservationService;
 import org.imannuel.moviereservationapi.service.ShowtimeService;
+import org.imannuel.moviereservationapi.utils.PaginationUtil;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -113,12 +114,23 @@ public class ReservationServiceImpl implements ReservationService {
 
     @Override
     @Transactional(readOnly = true)
-    public ReservationListResponse getAllReservationByUserId() {
+    public ReservationPageResponse getAllReservationByUserId(Integer page, Integer size) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserAccount userAccount = (UserAccount) authentication.getPrincipal();
 
-        List<Reservation> reservationByUserId = reservationRepository.getAllReservationByUserId(userAccount.getId());
-        return ReservationMapper.reservationListToReservationListResponse(reservationByUserId);
+        int offset = PaginationUtil.calculateOffset(page, size);
+        long totalReservations = reservationRepository.countTotalReservationByUserId(userAccount.getId());
+        int totalPages = PaginationUtil.calculateTotalPages(totalReservations, size);
+
+        List<Reservation> reservationByUserId = reservationRepository.getAllReservationByUserId(userAccount.getId(), size, offset);
+
+        return ReservationPageResponse.builder()
+                .reservations(ReservationMapper.reservationListToReservationListResponse(reservationByUserId))
+                .currentPage(page)
+                .pageSize(size)
+                .totalElements(totalReservations)
+                .totalPages(totalPages)
+                .build();
     }
 
     @Override

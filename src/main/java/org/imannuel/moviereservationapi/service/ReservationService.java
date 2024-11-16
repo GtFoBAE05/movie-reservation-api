@@ -2,7 +2,7 @@ package org.imannuel.moviereservationapi.service;
 
 import org.imannuel.moviereservationapi.dto.request.reservation.ReservationRequest;
 import org.imannuel.moviereservationapi.dto.response.payment.PaymentResponse;
-import org.imannuel.moviereservationapi.dto.response.reservation.ReservationListResponse;
+import org.imannuel.moviereservationapi.dto.response.reservation.ReservationPageResponse;
 import org.imannuel.moviereservationapi.dto.response.reservation.ReservationResponse;
 import org.imannuel.moviereservationapi.entity.Reservation;
 
@@ -21,7 +21,7 @@ public interface ReservationService {
 
     ReservationResponse getReservationById(String reservationId);
 
-    ReservationListResponse getAllReservationByUserId();
+    ReservationPageResponse getAllReservationByUserId(Integer page, Integer size);
 
     boolean existsByReservationIdAndUserAccountId(String reservationId, String userAccountId);
 }
