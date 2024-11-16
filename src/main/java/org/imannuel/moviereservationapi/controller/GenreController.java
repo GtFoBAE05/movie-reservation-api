@@ -9,7 +9,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.imannuel.moviereservationapi.dto.mapper.template.ApiMapper;
 import org.imannuel.moviereservationapi.dto.request.genre.GenreRequest;
-import org.imannuel.moviereservationapi.dto.response.genre.GenreListResponse;
+import org.imannuel.moviereservationapi.dto.response.genre.GenrePageResponse;
 import org.imannuel.moviereservationapi.dto.response.genre.GenreResponse;
 import org.imannuel.moviereservationapi.dto.response.template.ApiTemplateResponse;
 import org.imannuel.moviereservationapi.service.GenreService;
@@ -45,8 +45,6 @@ public class GenreController {
         return ApiMapper.basicMapper(HttpStatus.CREATED, "Successfully created genre", null);
     }
 
-    ;
-
     @Operation(
             summary = "Retrieve all genres",
             description = "Retrieve a list of all genres in the system.",
@@ -55,12 +53,14 @@ public class GenreController {
             }
     )
     @GetMapping
-    public ResponseEntity getAllGenre() {
-        GenreListResponse genres = genreService.getAllGenre();
-        return ApiMapper.basicMapper(HttpStatus.OK, "Successfully retrieved all genres", genres);
+    public ResponseEntity getAllGenre(
+            @RequestParam(name = "page", required = false, defaultValue = "0") Integer page,
+            @RequestParam(name = "size", required = false, defaultValue = "10") Integer size
+    ) {
+        GenrePageResponse genrePageResponse = genreService.getAllGenre(page, size);
+        return ApiMapper.paginationMapper(HttpStatus.OK, "Successfully retrieved all genres", genrePageResponse.getGenres(),
+                genrePageResponse.getTotalElements(), genrePageResponse.getPageSize(), genrePageResponse.getCurrentPage());
     }
-
-    ;
 
     @Operation(
             summary = "Get genre by ID",
@@ -77,8 +77,6 @@ public class GenreController {
         GenreResponse genre = genreService.getGenreById(id);
         return ApiMapper.basicMapper(HttpStatus.OK, "Successfully retrieved genre with ID " + id, genre);
     }
-
-    ;
 
     @Operation(
             summary = "Update genre by ID",
@@ -120,7 +118,7 @@ public class GenreController {
         return ApiMapper.basicMapper(HttpStatus.OK, "Successfully deleted genre with ID " + id, null);
     }
 
-    private static class ListGenreDataResponse extends ApiTemplateResponse<GenreListResponse> {
+    private static class ListGenreDataResponse extends ApiTemplateResponse<GenrePageResponse> {
     }
 
     private static class GenreDataResponse extends ApiTemplateResponse<GenreResponse> {

@@ -23,6 +23,7 @@ public class CustomAuthEntryPoint implements AuthenticationEntryPoint {
         ApiTemplateResponse<?> apiTemplateResponse = new ApiTemplateResponse<>(
                 HttpStatus.FORBIDDEN.value(),
                 authException.getMessage(),
+                null,
                 null
         );
         String responseString = objectMapper.writeValueAsString(apiTemplateResponse);

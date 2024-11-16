@@ -41,15 +41,17 @@ public interface ShowtimeRepository extends JpaRepository<Showtime, UUID> {
     @Transactional(readOnly = true)
     @Query(value = "SELECT id, movie_id, room_id, start_date_time, price " +
             "FROM t_showtime " +
-            "ORDER BY start_date_time", nativeQuery = true)
-    List<Showtime> getAllShowtimes();
+            "ORDER BY start_date_time " +
+            "LIMIT :limit OFFSET :offset", nativeQuery = true)
+    List<Showtime> getAllShowtimes(@Param("limit") int limit, @Param("offset") int offset);
 
     @Transactional(readOnly = true)
     @Query(value = "SELECT id, movie_id, room_id, start_date_time, price " +
             "FROM t_showtime " +
             "WHERE t_showtime.start_date_time < CURRENT_TIMESTAMP " +
-            "ORDER BY start_date_time DESC", nativeQuery = true)
-    List<Showtime> findAllHistoryShowtimes();
+            "ORDER BY start_date_time DESC " +
+            "LIMIT :limit OFFSET :offset ", nativeQuery = true)
+    List<Showtime> findAllHistoryShowtimes(@Param("limit") int limit, @Param("offset") int offset);
 
     @Transactional(readOnly = true)
     @Query(value = "SELECT id, movie_id, room_id, start_date_time, price " +
@@ -57,8 +59,10 @@ public interface ShowtimeRepository extends JpaRepository<Showtime, UUID> {
             "WHERE start_date_time >= CURRENT_TIMESTAMP " +
             "AND (CAST(:date AS DATE) IS NULL OR CAST(start_date_time AS DATE) = :date) " +
             "AND (:movieId IS NULL OR movie_id = :movieId) " +
-            "ORDER BY start_date_time", nativeQuery = true)
-    List<Showtime> findShowtimes(@Param("date") LocalDate date, @Param("movieId") UUID movieId);
+            "ORDER BY start_date_time " +
+            "LIMIT :limit OFFSET :offset", nativeQuery = true)
+    List<Showtime> findShowtimes(@Param("date") LocalDate date, @Param("movieId") UUID movieId,
+                                 @Param("limit") int limit, @Param("offset") int offset);
 
     @Query(value = "SELECT CASE WHEN COUNT(*) > 0 THEN true ELSE false END " +
             "FROM t_showtime " +
@@ -72,4 +76,18 @@ public interface ShowtimeRepository extends JpaRepository<Showtime, UUID> {
             "WHERE start_date_time > CURRENT_DATE " +
             "AND id = :showtimeId)", nativeQuery = true)
     boolean checkIsShowtimeIsReserveable(@Param("showtimeId") UUID showtimeId);
+
+    @Query(value = "SELECT COUNT(*) FROM t_showtime", nativeQuery = true)
+    public long countTotalShowtime();
+
+    @Query(value = "SELECT COUNT(*) FROM t_showtime", nativeQuery = true)
+    public long countTotalHistoryShowtimes();
+
+    @Query(value = "SELECT COUNT(*) FROM t_showtime " +
+            "WHERE start_date_time >= CURRENT_TIMESTAMP " +
+            "AND (CAST(:date AS DATE) IS NULL OR CAST(start_date_time AS DATE) = :date) " +
+            "AND (:movieId IS NULL OR movie_id = :movieId)", nativeQuery = true)
+    public long countTotalFilteredShowtimes(@Param("date") LocalDate date, @Param("movieId") UUID movieId);
+
+
 }

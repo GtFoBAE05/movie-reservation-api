@@ -1,6 +1,5 @@
 package org.imannuel.moviereservationapi.dto.mapper;
 
-import org.imannuel.moviereservationapi.dto.response.reservation.ReservationListResponse;
 import org.imannuel.moviereservationapi.dto.response.reservation.ReservationResponse;
 import org.imannuel.moviereservationapi.entity.Reservation;
 
@@ -16,10 +15,7 @@ public class ReservationMapper {
                 .build();
     }
 
-    public static ReservationListResponse reservationListToReservationListResponse(List<Reservation> reservations) {
-        return ReservationListResponse.builder()
-                .reservations(reservations.stream().map(reservation -> reservationToReservationResponse(reservation)).toList())
-                .build();
+    public static List<ReservationResponse> reservationListToReservationListResponse(List<Reservation> reservations) {
+        return reservations.stream().map(reservation -> reservationToReservationResponse(reservation)).toList();
     }
-
 }

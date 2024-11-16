@@ -71,10 +71,15 @@ public interface ReservationRepository extends JpaRepository<Reservation, UUID> 
     Optional<Reservation> findReservationById(@Param("reservationId") UUID reservationId);
 
     @Transactional(readOnly = true)
-    @Query(value = "SELECT id, showtime_id, user_id, is_cancel, payment_id FROM t_reservation WHERE user_id = :userId", nativeQuery = true)
-    List<Reservation> getAllReservationByUserId(@Param("userId") UUID userId);
+    @Query(value = "SELECT id, showtime_id, user_id, is_cancel, payment_id FROM t_reservation WHERE user_id = :userId " +
+            "LIMIT :limit OFFSET :offset", nativeQuery = true)
+    List<Reservation> getAllReservationByUserId(@Param("userId") UUID userId, @Param("limit") int limit, @Param("offset") int offset);
+
+    @Transactional(readOnly = true)
+    @Query(value = "SELECT COUNT(*) FROM t_reservation WHERE user_id = :userId", nativeQuery = true)
+    long countTotalReservationByUserId(@Param("userId") UUID userId);
 
     @Transactional(readOnly = true)
     @Query(value = "SELECT EXISTS(SELECT 1 FROM t_reservation WHERE user_id = :userId AND id = :reservationId)", nativeQuery = true)
-    boolean existsByReservationIdIdAndUserAccountId(@Param("reservationId")UUID reservationId, @Param("userId") UUID userId);
+    boolean existsByReservationIdIdAndUserAccountId(@Param("reservationId") UUID reservationId, @Param("userId") UUID userId);
 }

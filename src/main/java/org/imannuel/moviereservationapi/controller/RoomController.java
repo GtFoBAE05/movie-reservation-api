@@ -8,7 +8,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.imannuel.moviereservationapi.dto.mapper.template.ApiMapper;
 import org.imannuel.moviereservationapi.dto.request.room.RoomRequest;
-import org.imannuel.moviereservationapi.dto.response.room.RoomListResponse;
+import org.imannuel.moviereservationapi.dto.response.room.RoomPageResponse;
 import org.imannuel.moviereservationapi.dto.response.room.RoomResponse;
 import org.imannuel.moviereservationapi.dto.response.template.ApiTemplateResponse;
 import org.imannuel.moviereservationapi.service.RoomService;
@@ -48,13 +48,17 @@ public class RoomController {
             summary = "Get all rooms",
             description = "Retrieve a list of all available rooms. ",
             responses = {
-                    @ApiResponse(responseCode = "200", description = "Successfully fetched all rooms", content = @Content(schema = @Schema(implementation = ListRoomDataResponse.class))),
+                    @ApiResponse(responseCode = "200", description = "Successfully retrieved all rooms", content = @Content(schema = @Schema(implementation = ListRoomDataResponse.class))),
             }
     )
     @GetMapping
-    public ResponseEntity getAllRoom() {
-        RoomListResponse rooms = roomService.getAllRoom();
-        return ApiMapper.basicMapper(HttpStatus.OK, "Successfully fetched all rooms", rooms);
+    public ResponseEntity getAllRoom(
+            @RequestParam(name = "page", required = false, defaultValue = "0") Integer page,
+            @RequestParam(name = "size", required = false, defaultValue = "10") Integer size
+    ) {
+        RoomPageResponse roomPageResponse = roomService.getAllRoom(page, size);
+        return ApiMapper.paginationMapper(HttpStatus.OK, "Successfully retrieved all rooms", roomPageResponse.getRooms(),
+                roomPageResponse.getTotalElements(), roomPageResponse.getPageSize(), roomPageResponse.getCurrentPage());
     }
 
     @Operation(

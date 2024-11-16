@@ -2,7 +2,7 @@ package org.imannuel.moviereservationapi.service;
 
 import org.imannuel.moviereservationapi.dto.request.showtime.ShowtimeRequest;
 import org.imannuel.moviereservationapi.dto.response.Seat.SeatListResponse;
-import org.imannuel.moviereservationapi.dto.response.showtime.ShowtimeListResponse;
+import org.imannuel.moviereservationapi.dto.response.showtime.ShowtimePageResponse;
 import org.imannuel.moviereservationapi.dto.response.showtime.ShowtimeResponse;
 import org.imannuel.moviereservationapi.entity.Showtime;
 
@@ -15,11 +15,11 @@ public interface ShowtimeService {
 
     ShowtimeResponse getShowtimeById(String id);
 
-    ShowtimeListResponse getAllShowtime();
+    ShowtimePageResponse getAllShowtime(Integer page, Integer size);
 
-    ShowtimeListResponse getAllHistoryShowtime();
+    ShowtimePageResponse getAllHistoryShowtime(Integer page, Integer size);
 
-    ShowtimeListResponse getShowtimeBy(String date, String movieId);
+    ShowtimePageResponse getShowtimeBy(String date, String movieId, Integer page, Integer size);
 
     boolean checkIsShowtimeUpdateable(String id);
 

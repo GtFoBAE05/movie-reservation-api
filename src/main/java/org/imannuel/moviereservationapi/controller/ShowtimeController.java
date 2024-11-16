@@ -9,7 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.imannuel.moviereservationapi.dto.mapper.template.ApiMapper;
 import org.imannuel.moviereservationapi.dto.request.showtime.ShowtimeRequest;
 import org.imannuel.moviereservationapi.dto.response.Seat.SeatListResponse;
-import org.imannuel.moviereservationapi.dto.response.showtime.ShowtimeListResponse;
+import org.imannuel.moviereservationapi.dto.response.showtime.ShowtimePageResponse;
 import org.imannuel.moviereservationapi.dto.response.showtime.ShowtimeResponse;
 import org.imannuel.moviereservationapi.dto.response.template.ApiTemplateResponse;
 import org.imannuel.moviereservationapi.service.ShowtimeService;
@@ -101,9 +101,13 @@ public class ShowtimeController {
             }
     )
     @GetMapping("/all")
-    public ResponseEntity getAllShowtime() {
-        ShowtimeListResponse allShowtime = showtimeService.getAllShowtime();
-        return ApiMapper.basicMapper(HttpStatus.OK, "Successfully fetched all showtimes", allShowtime);
+    public ResponseEntity getAllShowtime(
+            @RequestParam(name = "page", required = false, defaultValue = "0") Integer page,
+            @RequestParam(name = "size", required = false, defaultValue = "10") Integer size
+    ) {
+        ShowtimePageResponse showtimePageResponse = showtimeService.getAllShowtime(page, size);
+        return ApiMapper.paginationMapper(HttpStatus.OK, "Successfully fetched all showtimes", showtimePageResponse.getShowtimes(),
+                showtimePageResponse.getTotalElements(), showtimePageResponse.getPageSize(), showtimePageResponse.getCurrentPage());
     }
 
     @Operation(
@@ -117,16 +121,19 @@ public class ShowtimeController {
     @GetMapping
     public ResponseEntity getAvailableShowtimeBy(
             @RequestParam(name = "date", required = false) String date,
-            @RequestParam(name = "movie", required = false) String movieId
+            @RequestParam(name = "movie", required = false) String movieId,
+            @RequestParam(name = "page", required = false, defaultValue = "0") Integer page,
+            @RequestParam(name = "size", required = false, defaultValue = "10") Integer size
     ) {
-        ShowtimeListResponse showtimes = showtimeService.getShowtimeBy(date, movieId);
-        return ApiMapper.basicMapper(HttpStatus.OK, "Successfully fetched showtimes", showtimes);
+        ShowtimePageResponse showtimePageResponse = showtimeService.getShowtimeBy(date, movieId, page, size);
+        return ApiMapper.paginationMapper(HttpStatus.OK, "Successfully fetched showtimes", showtimePageResponse.getShowtimes(),
+                showtimePageResponse.getTotalElements(), showtimePageResponse.getPageSize(), showtimePageResponse.getCurrentPage());
     }
 
     private static class SeatListDataResponse extends ApiTemplateResponse<SeatListResponse> {
     }
 
-    private static class ListShowtimeDataResponse extends ApiTemplateResponse<ShowtimeListResponse> {
+    private static class ListShowtimeDataResponse extends ApiTemplateResponse<ShowtimePageResponse> {
     }
 
     private static class ShowtimeDataResponse extends ApiTemplateResponse<ShowtimeResponse> {

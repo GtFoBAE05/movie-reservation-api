@@ -9,6 +9,14 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class ReservationListResponse {
+public class ReservationPageResponse {
     private List<ReservationResponse> reservations;
+
+    private long totalElements;
+
+    private int totalPages;
+
+    private int currentPage;
+
+    private int pageSize;
 }

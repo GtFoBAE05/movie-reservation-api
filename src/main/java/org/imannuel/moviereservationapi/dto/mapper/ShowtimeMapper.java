@@ -1,6 +1,5 @@
 package org.imannuel.moviereservationapi.dto.mapper;
 
-import org.imannuel.moviereservationapi.dto.response.showtime.ShowtimeListResponse;
 import org.imannuel.moviereservationapi.dto.response.showtime.ShowtimeResponse;
 import org.imannuel.moviereservationapi.entity.Showtime;
 
@@ -17,9 +16,7 @@ public class ShowtimeMapper {
                 .build();
     }
 
-    public static ShowtimeListResponse showtimeListToShowTimeListResponse(List<Showtime> showtimes) {
-        return ShowtimeListResponse.builder()
-                .showtimes(showtimes.stream().map(showtime -> showtimeToShowtimeResponse(showtime)).toList())
-                .build();
+    public static List<ShowtimeResponse> showtimeListToShowTimeListResponse(List<Showtime> showtimes) {
+        return showtimes.stream().map(showtime -> showtimeToShowtimeResponse(showtime)).toList();
     }
 }

@@ -9,6 +9,14 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class GenreListResponse {
+public class GenrePageResponse {
     private List<GenreResponse> genres;
+
+    private long totalElements;
+
+    private int totalPages;
+
+    private int currentPage;
+
+    private int pageSize;
 }

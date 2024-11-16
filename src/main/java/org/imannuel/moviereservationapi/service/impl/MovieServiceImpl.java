@@ -1,9 +1,13 @@
 package org.imannuel.moviereservationapi.service.impl;
 
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.imannuel.moviereservationapi.constant.SeedData;
 import org.imannuel.moviereservationapi.dto.mapper.MovieMapper;
-import org.imannuel.moviereservationapi.dto.response.movie.MovieListResponse;
+import org.imannuel.moviereservationapi.dto.response.genre.GenrePageResponse;
+import org.imannuel.moviereservationapi.dto.response.genre.GenreResponse;
+import org.imannuel.moviereservationapi.dto.response.movie.MoviePageResponse;
 import org.imannuel.moviereservationapi.dto.response.movie.MovieResponse;
 import org.imannuel.moviereservationapi.entity.Movie;
 import org.imannuel.moviereservationapi.entity.MovieImage;
@@ -12,14 +16,15 @@ import org.imannuel.moviereservationapi.service.GenreService;
 import org.imannuel.moviereservationapi.service.MovieImageService;
 import org.imannuel.moviereservationapi.service.MovieService;
 import org.imannuel.moviereservationapi.utils.DateUtil;
+import org.imannuel.moviereservationapi.utils.PaginationUtil;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -31,24 +36,25 @@ public class MovieServiceImpl implements MovieService {
     private final MovieImageService movieImageService;
     private final GenreService genreService;
 
-//    @PostConstruct
-//    @Transactional
-//    public void init() {
-//        GenreListResponse allGenre = genreService.getAllGenre();
-//
-//        SeedData.movieSeedData.stream()
-//                .filter(movieRequest -> !movieRepository.existsMovieByName(movieRequest.getTitle()))
-//                .peek(movieRequest -> {
-//                    GenreResponse randomGenre = allGenre.getGenres().get(new Random().nextInt(allGenre.getGenres().size()));
-//                    movieRequest.setGenres(List.of(randomGenre.getId()));
-//                })
-//                .forEach(movieRequest -> insertMovie(movieRequest));
-//    }
+    @PostConstruct
+    @Transactional
+    public void init() {
+        GenrePageResponse allGenre = genreService.getAllGenre(0, 10);
+
+        SeedData.movieSeedData.stream()
+                .filter(movieRequest -> !movieRepository.existsMovieByName(movieRequest.getTitle()))
+                .peek(movieRequest -> {
+                    GenreResponse randomGenre = allGenre.getGenres().get(new Random().nextInt(allGenre.getGenres().size()));
+                    movieRequest.setGenres(List.of(randomGenre.getId()));
+                })
+                .forEach(movieRequest -> insertMovie(List.of(), movieRequest.getTitle(), movieRequest.getDescription(),
+                        movieRequest.getDurationInMinute(), movieRequest.getGenres(), movieRequest.getReleaseDate()));
+    }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void insertMovie(List<MultipartFile> multipartFiles, String title, String description,
-                            Integer durationInMinute, String genres, String releaseDate) {
+                            Integer durationInMinute, List<Long> genres, String releaseDate) {
         Movie movie = Movie.builder()
                 .id(UUID.randomUUID())
                 .title(title)
@@ -63,9 +69,9 @@ public class MovieServiceImpl implements MovieService {
             movie.setImages(menuImages);
         }
 
-        Arrays.stream(genres.split(",")).toList().forEach(aLong -> {
-            genreService.findGenreById(Long.parseLong(aLong));
-            insertMovieGenre(movie.getId(), Long.parseLong(aLong));
+        genres.forEach(aLong -> {
+            genreService.findGenreById(aLong);
+            insertMovieGenre(movie.getId(), aLong);
         });
     }
 
@@ -77,7 +83,7 @@ public class MovieServiceImpl implements MovieService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void updateMovieById(String id, List<MultipartFile> multipartFiles, String title, String description,
-                                Integer durationInMinute, String genres, String releaseDate) {
+                                Integer durationInMinute, List<Long> genres, String releaseDate) {
         Movie movie = findMovieById(id);
 
         movie.setTitle(title);
@@ -91,9 +97,8 @@ public class MovieServiceImpl implements MovieService {
             movie.getImages().addAll(menuImages);
         }
 
-        List<Long> genreMappedList = Arrays.stream(genres.split(",")).map(s -> Long.parseLong(s)).toList();
-        movieRepository.removeGenresNotInList(movie.getId(), genreMappedList);
-        movieRepository.addGenresList(movie.getId(), genreMappedList);
+        movieRepository.removeGenresNotInList(movie.getId(), genres);
+        movieRepository.addGenresList(movie.getId(), genres);
     }
 
     @Override
@@ -108,9 +113,20 @@ public class MovieServiceImpl implements MovieService {
     }
 
     @Override
-    public MovieListResponse searchMovie(String title) {
-        List<Movie> allMovie = movieRepository.getAllMovie(title);
-        return MovieMapper.movieListToMovieListResponse(allMovie);
+    public MoviePageResponse searchMovie(String title, Integer page, Integer size) {
+        int offset = PaginationUtil.calculateOffset(page, size);
+        long totalMovies = movieRepository.countTotalMovies();
+        int totalPages = PaginationUtil.calculateTotalPages(totalMovies, size);
+
+        List<Movie> allMovie = movieRepository.getAllMovie(title, size, offset);
+
+        return MoviePageResponse.builder()
+                .movies(MovieMapper.movieListToMovieListResponse(allMovie))
+                .currentPage(page)
+                .pageSize(size)
+                .totalElements(totalMovies)
+                .totalPages(totalPages)
+                .build();
     }
 
     @Override

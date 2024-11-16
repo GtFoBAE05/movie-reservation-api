@@ -9,6 +9,14 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class ShowtimeListResponse {
+public class ShowtimePageResponse {
     private List<ShowtimeResponse> showtimes;
+
+    private long totalElements;
+
+    private int totalPages;
+
+    private int currentPage;
+
+    private int pageSize;
 }
