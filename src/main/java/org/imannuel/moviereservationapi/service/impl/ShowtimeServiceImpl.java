@@ -6,7 +6,7 @@ import org.imannuel.moviereservationapi.dto.mapper.SeatMapper;
 import org.imannuel.moviereservationapi.dto.mapper.ShowtimeMapper;
 import org.imannuel.moviereservationapi.dto.request.showtime.ShowtimeRequest;
 import org.imannuel.moviereservationapi.dto.response.Seat.SeatListResponse;
-import org.imannuel.moviereservationapi.dto.response.showtime.ShowtimeListResponse;
+import org.imannuel.moviereservationapi.dto.response.showtime.ShowtimePageResponse;
 import org.imannuel.moviereservationapi.dto.response.showtime.ShowtimeResponse;
 import org.imannuel.moviereservationapi.entity.Movie;
 import org.imannuel.moviereservationapi.entity.Room;
@@ -18,6 +18,7 @@ import org.imannuel.moviereservationapi.service.RoomService;
 import org.imannuel.moviereservationapi.service.SeatService;
 import org.imannuel.moviereservationapi.service.ShowtimeService;
 import org.imannuel.moviereservationapi.utils.DateUtil;
+import org.imannuel.moviereservationapi.utils.PaginationUtil;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -69,29 +70,63 @@ public class ShowtimeServiceImpl implements ShowtimeService {
 
     @Override
     @Transactional(readOnly = true)
-    public ShowtimeListResponse getAllShowtime() {
-        List<Showtime> showtimes = showtimeRepository.getAllShowtimes();
-        return ShowtimeMapper.showtimeListToShowTimeListResponse(showtimes);
+    public ShowtimePageResponse getAllShowtime(Integer page, Integer size) {
+        int offset = PaginationUtil.calculateOffset(page, size);
+        long totalShowtimes = showtimeRepository.countTotalShowtime();
+        int totalPages = PaginationUtil.calculateTotalPages(totalShowtimes, size);
+
+        List<Showtime> showtimes = showtimeRepository.getAllShowtimes(size, offset);
+
+        return ShowtimePageResponse.builder()
+                .showtimes(ShowtimeMapper.showtimeListToShowTimeListResponse(showtimes))
+                .currentPage(page)
+                .pageSize(size)
+                .totalElements(totalShowtimes)
+                .totalPages(totalPages)
+                .build();
     }
 
     @Override
     @Transactional(readOnly = true)
-    public ShowtimeListResponse getAllHistoryShowtime() {
-        List<Showtime> allHistoryShowtimes = showtimeRepository.findAllHistoryShowtimes();
-        return ShowtimeMapper.showtimeListToShowTimeListResponse(allHistoryShowtimes);
+    public ShowtimePageResponse getAllHistoryShowtime(Integer page, Integer size) {
+        int offset = PaginationUtil.calculateOffset(page, size);
+        long totalShowtimes = showtimeRepository.countTotalHistoryShowtimes();
+        int totalPages = PaginationUtil.calculateTotalPages(totalShowtimes, size);
+
+        List<Showtime> showtimes = showtimeRepository.findAllHistoryShowtimes(size, offset);
+
+        return ShowtimePageResponse.builder()
+                .showtimes(ShowtimeMapper.showtimeListToShowTimeListResponse(showtimes))
+                .currentPage(page)
+                .pageSize(size)
+                .totalElements(totalShowtimes)
+                .totalPages(totalPages)
+                .build();
     }
 
     @Override
     @Transactional(readOnly = true)
-    public ShowtimeListResponse getShowtimeBy(
-            String date,
-            String movieId
-    ) {
-        List<Showtime> showtimes = showtimeRepository.findShowtimes(
+    public ShowtimePageResponse getShowtimeBy(String date, String movieId, Integer page, Integer size) {
+        int offset = PaginationUtil.calculateOffset(page, size);
+        long totalShowtimes = showtimeRepository.countTotalFilteredShowtimes(
                 StringUtil.isNullOrEmpty(date) ? null : DateUtil.stringToLocalDate(date),
                 StringUtil.isNullOrEmpty(movieId) ? null : UUID.fromString(movieId)
         );
-        return ShowtimeMapper.showtimeListToShowTimeListResponse(showtimes);
+        int totalPages = PaginationUtil.calculateTotalPages(totalShowtimes, size);
+
+        List<Showtime> showtimes = showtimeRepository.findShowtimes(
+                StringUtil.isNullOrEmpty(date) ? null : DateUtil.stringToLocalDate(date),
+                StringUtil.isNullOrEmpty(movieId) ? null : UUID.fromString(movieId),
+                size, offset
+        );
+
+        return ShowtimePageResponse.builder()
+                .showtimes(ShowtimeMapper.showtimeListToShowTimeListResponse(showtimes))
+                .currentPage(page)
+                .pageSize(size)
+                .totalElements(totalShowtimes)
+                .totalPages(totalPages)
+                .build();
     }
 
     @Override
