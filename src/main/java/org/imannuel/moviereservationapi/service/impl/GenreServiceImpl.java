@@ -11,6 +11,7 @@ import org.imannuel.moviereservationapi.entity.Genre;
 import org.imannuel.moviereservationapi.repository.GenreRepository;
 import org.imannuel.moviereservationapi.service.GenreService;
 import org.imannuel.moviereservationapi.utils.PaginationUtil;
+import org.imannuel.moviereservationapi.utils.ValidationUtil;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,6 +23,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class GenreServiceImpl implements GenreService {
     private final GenreRepository genreRepository;
+    private final ValidationUtil validationUtil;
 
     @PostConstruct
     @Transactional(rollbackFor = Exception.class)
@@ -43,6 +45,8 @@ public class GenreServiceImpl implements GenreService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void createGenre(GenreRequest genreRequest) {
+        validationUtil.validate(genreRequest);
+
         if (genreRepository.existsGenreByName(genreRequest.getName())) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Genre already exists");
         }
@@ -79,6 +83,8 @@ public class GenreServiceImpl implements GenreService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void updateGenre(Long id, GenreRequest genreRequest) {
+        validationUtil.validate(genreRequest);
+
         genreRepository.updateGenreById(id, genreRequest.getName());
     }
 
