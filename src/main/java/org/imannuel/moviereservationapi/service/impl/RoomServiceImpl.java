@@ -1,15 +1,14 @@
 package org.imannuel.moviereservationapi.service.impl;
 
-import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
-import org.imannuel.moviereservationapi.constant.SeedData;
 import org.imannuel.moviereservationapi.dto.mapper.RoomMapper;
 import org.imannuel.moviereservationapi.dto.request.room.RoomRequest;
-import org.imannuel.moviereservationapi.dto.response.room.RoomListResponse;
+import org.imannuel.moviereservationapi.dto.response.room.RoomPageResponse;
 import org.imannuel.moviereservationapi.dto.response.room.RoomResponse;
 import org.imannuel.moviereservationapi.entity.Room;
 import org.imannuel.moviereservationapi.repository.RoomRepository;
 import org.imannuel.moviereservationapi.service.RoomService;
+import org.imannuel.moviereservationapi.utils.PaginationUtil;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -54,9 +53,20 @@ public class RoomServiceImpl implements RoomService {
     }
 
     @Override
-    public RoomListResponse getAllRoom() {
-        List<Room> rooms = roomRepository.getAllRoom();
-        return RoomMapper.roomListToRoomListResponse(rooms);
+    public RoomPageResponse getAllRoom(Integer page, Integer size) {
+        int offset = PaginationUtil.calculateOffset(page, size);
+        long totalRooms = roomRepository.countTotalRooms();
+        int totalPages = PaginationUtil.calculateTotalPages(totalRooms, size);
+
+        List<Room> allRoom = roomRepository.getAllRoom(size, offset);
+
+        return RoomPageResponse.builder()
+                .rooms(RoomMapper.roomListToRoomListResponse(allRoom))
+                .currentPage(page)
+                .pageSize(size)
+                .totalElements(totalRooms)
+                .totalPages(totalPages)
+                .build();
     }
 
     @Override

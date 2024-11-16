@@ -18,8 +18,8 @@ public interface RoomRepository extends JpaRepository<Room, Integer> {
     @Query(value = "INSERT INTO m_room(name) VALUES (:#{#room.name})", nativeQuery = true)
     void insertRoom(@Param("room") Room room);
 
-    @Query(value = "SELECT  id, name from m_room", nativeQuery = true)
-    List<Room> getAllRoom();
+    @Query(value = "SELECT  id, name from m_room LIMIT :limit OFFSET :offset", nativeQuery = true)
+    List<Room> getAllRoom(@Param("limit") int limit, @Param("offset") int offset);
 
     @Query(value = "SELECT mr.id, mr.name, ms.id as seat_id, ms.seat_code, ms.room_id as room_id from m_room mr left join m_seat ms on mr.id = ms.room_id where mr.id = :id", nativeQuery = true)
     Optional<Room> findRoomById(@Param("id") Long id);
@@ -44,4 +44,7 @@ public interface RoomRepository extends JpaRepository<Room, Integer> {
 
     @Query(value = "SELECT EXISTS (SELECT name FROM m_room WHERE name ILIKE :name)", nativeQuery = true)
     boolean existsRoomByName(@Param("name") String name);
+
+    @Query(value = "SELECT COUNT(*) FROM m_room", nativeQuery = true)
+    long countTotalRooms();
 }
