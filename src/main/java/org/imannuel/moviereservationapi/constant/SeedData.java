@@ -5,7 +5,7 @@ import org.imannuel.moviereservationapi.dto.request.movie.MovieRequest;
 import java.util.List;
 
 public class SeedData {
-    public static List<String> genreSeedData = List.of("Comedy", "Romance", "Thriller", "Action", "Adventure");
+    public static List<String> genreSeedData = List.of("COMEDY", "ROMANCE", "THRILLER", "ACTION", "ADVENTURE");
 
     public static List<MovieRequest> movieSeedData = List.of(
             new MovieRequest(

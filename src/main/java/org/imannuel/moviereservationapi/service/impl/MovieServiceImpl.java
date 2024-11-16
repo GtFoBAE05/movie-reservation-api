@@ -11,7 +11,7 @@ import org.imannuel.moviereservationapi.repository.MovieRepository;
 import org.imannuel.moviereservationapi.service.GenreService;
 import org.imannuel.moviereservationapi.service.MovieImageService;
 import org.imannuel.moviereservationapi.service.MovieService;
-import org.imannuel.moviereservationapi.utils.DateParse;
+import org.imannuel.moviereservationapi.utils.DateUtil;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -54,7 +54,7 @@ public class MovieServiceImpl implements MovieService {
                 .title(title)
                 .description(description)
                 .durationInMinutes(durationInMinute)
-                .releaseDate(DateParse.stringToLocalDate(releaseDate))
+                .releaseDate(DateUtil.stringToLocalDate(releaseDate))
                 .build();
         movieRepository.insertMovie(movie);
 
@@ -83,7 +83,7 @@ public class MovieServiceImpl implements MovieService {
         movie.setTitle(title);
         movie.setDescription(description);
         movie.setDurationInMinutes(durationInMinute);
-        movie.setReleaseDate(DateParse.stringToLocalDate(releaseDate));
+        movie.setReleaseDate(DateUtil.stringToLocalDate(releaseDate));
         movieRepository.updateMovieById(movie);
 
         if (multipartFiles != null && !multipartFiles.isEmpty()) {
