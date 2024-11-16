@@ -3,7 +3,7 @@ package org.imannuel.moviereservationapi.controller;
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.imannuel.moviereservationapi.dto.mapper.template.ApiMapper;
-import org.imannuel.moviereservationapi.dto.response.template.ApiResponse;
+import org.imannuel.moviereservationapi.dto.response.template.ApiTemplateResponse;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,7 +15,7 @@ import org.springframework.web.server.ResponseStatusException;
 @Slf4j
 public class ExceptionController {
     @ExceptionHandler({ResponseStatusException.class})
-    public ResponseEntity<ApiResponse> handlingResponseStatusException(ResponseStatusException e) {
+    public ResponseEntity<ApiTemplateResponse> handlingResponseStatusException(ResponseStatusException e) {
         return ApiMapper.basicMapper(
                 HttpStatus.valueOf(e.getStatusCode().value()), e.getReason(), null
         );
@@ -48,7 +48,7 @@ public class ExceptionController {
     }
 
     @ExceptionHandler({ConstraintViolationException.class})
-    public ResponseEntity<ApiResponse> handlingConstraintViolationException(ConstraintViolationException e) {
+    public ResponseEntity<ApiTemplateResponse> handlingConstraintViolationException(ConstraintViolationException e) {
         return ApiMapper.basicMapper(
                 HttpStatus.BAD_REQUEST, e.getMessage(), null
         );

@@ -17,7 +17,7 @@ import org.imannuel.moviereservationapi.service.MovieService;
 import org.imannuel.moviereservationapi.service.RoomService;
 import org.imannuel.moviereservationapi.service.SeatService;
 import org.imannuel.moviereservationapi.service.ShowtimeService;
-import org.imannuel.moviereservationapi.utils.DateParse;
+import org.imannuel.moviereservationapi.utils.DateUtil;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -88,7 +88,7 @@ public class ShowtimeServiceImpl implements ShowtimeService {
             String movieId
     ) {
         List<Showtime> showtimes = showtimeRepository.findShowtimes(
-                StringUtil.isNullOrEmpty(date) ? null : DateParse.stringToLocalDate(date),
+                StringUtil.isNullOrEmpty(date) ? null : DateUtil.stringToLocalDate(date),
                 StringUtil.isNullOrEmpty(movieId) ? null : UUID.fromString(movieId)
         );
         return ShowtimeMapper.showtimeListToShowTimeListResponse(showtimes);
@@ -114,7 +114,7 @@ public class ShowtimeServiceImpl implements ShowtimeService {
     private Showtime buildShowtime(ShowtimeRequest showtimeRequest) {
         Movie movie = movieService.findMovieById(showtimeRequest.getMovieId());
         Room room = roomService.findRoomById(showtimeRequest.getRoomId());
-        LocalDateTime startDateTime = DateParse.stringToLocalDateTime(showtimeRequest.getStartDateTime());
+        LocalDateTime startDateTime = DateUtil.stringToLocalDateTime(showtimeRequest.getStartDateTime());
 
         return Showtime.builder()
                 .movie(movie)

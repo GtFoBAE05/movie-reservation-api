@@ -1,11 +1,17 @@
 package org.imannuel.moviereservationapi.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.imannuel.moviereservationapi.dto.mapper.template.ApiMapper;
 import org.imannuel.moviereservationapi.dto.request.showtime.ShowtimeRequest;
 import org.imannuel.moviereservationapi.dto.response.Seat.SeatListResponse;
 import org.imannuel.moviereservationapi.dto.response.showtime.ShowtimeListResponse;
 import org.imannuel.moviereservationapi.dto.response.showtime.ShowtimeResponse;
+import org.imannuel.moviereservationapi.dto.response.template.ApiTemplateResponse;
 import org.imannuel.moviereservationapi.service.ShowtimeService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,18 +21,36 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping(path = "/api/showtimes")
 @RequiredArgsConstructor
+@Tag(name = "Showtime Management", description = "APIs for managing movie showtimes")
 public class ShowtimeController {
     private final ShowtimeService showtimeService;
 
+    @Operation(
+            summary = "Create a new showtime",
+            description = "Create a new showtime for a movie in a specific room and at a scheduled time. Only accessible by users with ADMIN role.",
+            responses = {
+                    @ApiResponse(responseCode = "201", description = "Successfully created showtime", content = @Content(schema = @Schema(implementation = ApiTemplateResponse.class))),
+                    @ApiResponse(responseCode = "400", description = "Invalid input data", content = @Content(schema = @Schema(implementation = ApiTemplateResponse.class))),
+                    @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content(schema = @Schema(implementation = ApiTemplateResponse.class)))
+            }
+    )
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity createShowtime(
             @RequestBody ShowtimeRequest showtimeRequest
     ) {
         showtimeService.createShowtime(showtimeRequest);
-        return ApiMapper.basicMapper(HttpStatus.CREATED, "Success create showtime", null);
+        return ApiMapper.basicMapper(HttpStatus.CREATED, "Successfully created showtime", null);
     }
 
+    @Operation(
+            summary = "Update an existing showtime",
+            description = "Update the details of an existing showtime using its ID.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Successfully updated showtime", content = @Content(schema = @Schema(implementation = ApiTemplateResponse.class))),
+                    @ApiResponse(responseCode = "404", description = "Showtime not found", content = @Content(schema = @Schema(implementation = ApiTemplateResponse.class)))
+            }
+    )
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity updateShowtime(
@@ -34,38 +58,77 @@ public class ShowtimeController {
             @RequestBody ShowtimeRequest showtimeRequest
     ) {
         showtimeService.updateShowtime(id, showtimeRequest);
-        return ApiMapper.basicMapper(HttpStatus.OK, "Success update showtime", null);
+        return ApiMapper.basicMapper(HttpStatus.OK, "Successfully updated showtime", null);
     }
 
+    @Operation(
+            summary = "Get a showtime by ID",
+            description = "Retrieve the details of a specific showtime by its ID.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Successfully retrieved showtime", content = @Content(schema = @Schema(implementation = ShowtimeDataResponse.class))),
+                    @ApiResponse(responseCode = "404", description = "Showtime not found", content = @Content(schema = @Schema(implementation = ApiTemplateResponse.class)))
+            }
+    )
     @GetMapping("/{id}")
     public ResponseEntity getShowtimeById(
             @PathVariable(name = "id") String id
     ) {
         ShowtimeResponse showtime = showtimeService.getShowtimeById(id);
-        return ApiMapper.basicMapper(HttpStatus.OK, "Success get showtime", showtime);
+        return ApiMapper.basicMapper(HttpStatus.OK, "Successfully retrieved showtime", showtime);
     }
 
+    @Operation(
+            summary = "Get available seats for a specific showtime",
+            description = "Retrieve the list of available seats for a given showtime.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Successfully retrieved available seats", content = @Content(schema = @Schema(implementation = SeatListDataResponse.class))),
+                    @ApiResponse(responseCode = "404", description = "Showtime not found", content = @Content(schema = @Schema(implementation = ApiTemplateResponse.class)))
+            }
+    )
     @GetMapping("/{id}/seats")
     public ResponseEntity getAvailableSeatShowtime(
             @PathVariable(name = "id") String id
     ) {
         SeatListResponse availableSeat = showtimeService.getAvailableSeat(id);
-        return ApiMapper.basicMapper(HttpStatus.OK, "Success get available seats", availableSeat);
+        return ApiMapper.basicMapper(HttpStatus.OK, "Successfully retrieved available seats", availableSeat);
     }
 
+    @Operation(
+            summary = "Get all showtimes",
+            description = "Retrieve a list of all showtimes available.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Successfully fetched all showtimes", content = @Content(schema = @Schema(implementation = ListShowtimeDataResponse.class)))
+            }
+    )
     @GetMapping("/all")
-    public ResponseEntity getAllShowtime(
-    ) {
+    public ResponseEntity getAllShowtime() {
         ShowtimeListResponse allShowtime = showtimeService.getAllShowtime();
-        return ApiMapper.basicMapper(HttpStatus.OK, "Success fetch all showtime", allShowtime);
+        return ApiMapper.basicMapper(HttpStatus.OK, "Successfully fetched all showtimes", allShowtime);
     }
 
+    @Operation(
+            summary = "Get showtimes filtered by date or movie",
+            description = "Retrieve a list of showtimes filtered by date or movie ID.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Successfully fetched showtimes", content = @Content(schema = @Schema(implementation = ListShowtimeDataResponse.class))),
+                    @ApiResponse(responseCode = "404", description = "No showtimes found", content = @Content(schema = @Schema(implementation = ApiTemplateResponse.class)))
+            }
+    )
     @GetMapping
     public ResponseEntity getAvailableShowtimeBy(
             @RequestParam(name = "date", required = false) String date,
             @RequestParam(name = "movie", required = false) String movieId
     ) {
         ShowtimeListResponse showtimes = showtimeService.getShowtimeBy(date, movieId);
-        return ApiMapper.basicMapper(HttpStatus.OK, "Success fetch showtime", showtimes);
+        return ApiMapper.basicMapper(HttpStatus.OK, "Successfully fetched showtimes", showtimes);
+    }
+
+    private static class SeatListDataResponse extends ApiTemplateResponse<SeatListResponse> {
+    }
+
+    private static class ListShowtimeDataResponse extends ApiTemplateResponse<ShowtimeListResponse> {
+    }
+
+    private static class ShowtimeDataResponse extends ApiTemplateResponse<ShowtimeResponse> {
     }
 }
