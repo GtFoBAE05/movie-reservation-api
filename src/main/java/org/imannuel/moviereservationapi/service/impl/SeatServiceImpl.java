@@ -11,6 +11,7 @@ import org.imannuel.moviereservationapi.entity.Seat;
 import org.imannuel.moviereservationapi.repository.SeatRepository;
 import org.imannuel.moviereservationapi.service.RoomService;
 import org.imannuel.moviereservationapi.service.SeatService;
+import org.imannuel.moviereservationapi.utils.ValidationUtil;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,6 +26,7 @@ import java.util.UUID;
 public class SeatServiceImpl implements SeatService {
     private final SeatRepository seatRepository;
     private final RoomService roomService;
+    private final ValidationUtil validationUtil;
 
     @PostConstruct
     @Transactional(rollbackFor = Exception.class)
@@ -46,6 +48,8 @@ public class SeatServiceImpl implements SeatService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void createSeat(SeatRequest seatRequest) {
+        validationUtil.validate(seatRequest);
+
         Room room = roomService.findRoomById(seatRequest.getRoomId());
         Seat seat = Seat.builder()
                 .id(UUID.randomUUID())
@@ -69,6 +73,8 @@ public class SeatServiceImpl implements SeatService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void updateSeat(String id, SeatRequest seatRequest) {
+        validationUtil.validate(seatRequest);
+
         Seat seat = findSeatById(id);
         seat.setSeatCode(seatRequest.getSeatCode());
         if (!Objects.equals(seat.getRoom().getId(), seatRequest.getRoomId())) {
