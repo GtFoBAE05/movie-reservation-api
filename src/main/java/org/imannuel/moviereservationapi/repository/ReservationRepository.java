@@ -22,6 +22,12 @@ public interface ReservationRepository extends JpaRepository<Reservation, UUID> 
 
     @Transactional(rollbackFor = Exception.class)
     @Modifying
+    @Query(value = "UPDATE t_reservation SET payment_id = :#{#reservation.payment.id} " +
+            "WHERE id = :#{#reservation.id}", nativeQuery = true)
+    void updateReservationPayment(@Param("reservation") Reservation reservation);
+
+    @Transactional(rollbackFor = Exception.class)
+    @Modifying
     @Query(value = "INSERT INTO t_seat_reservation (reservation_id, seat_id) " +
             "VALUES (:reservationId, :seatId)", nativeQuery = true)
     void insertSeatReservation(@Param("reservationId") UUID reservationId, @Param("seatId") UUID seatId);
@@ -61,16 +67,14 @@ public interface ReservationRepository extends JpaRepository<Reservation, UUID> 
     boolean checkIsReservationIsCancelable(@Param("reservationId") UUID reservationId);
 
     @Transactional(readOnly = true)
-    @Query(value = "SELECT id, showtime_id, user_id, is_cancel FROM t_reservation WHERE id = :reservationId", nativeQuery = true)
+    @Query(value = "SELECT id, showtime_id, user_id, is_cancel, payment_id FROM t_reservation WHERE id = :reservationId", nativeQuery = true)
     Optional<Reservation> findReservationById(@Param("reservationId") UUID reservationId);
 
     @Transactional(readOnly = true)
-    @Query(value = "SELECT id, showtime_id, user_id, is_cancel FROM t_reservation WHERE user_id = :userId", nativeQuery = true)
+    @Query(value = "SELECT id, showtime_id, user_id, is_cancel, payment_id FROM t_reservation WHERE user_id = :userId", nativeQuery = true)
     List<Reservation> getAllReservationByUserId(@Param("userId") UUID userId);
 
     @Transactional(readOnly = true)
     @Query(value = "SELECT EXISTS(SELECT 1 FROM t_reservation WHERE user_id = :userId AND id = :reservationId)", nativeQuery = true)
     boolean existsByReservationIdIdAndUserAccountId(@Param("reservationId")UUID reservationId, @Param("userId") UUID userId);
-
-
 }
