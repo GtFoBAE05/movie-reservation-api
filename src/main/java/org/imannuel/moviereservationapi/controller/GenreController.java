@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.imannuel.moviereservationapi.constant.Constant;
 import org.imannuel.moviereservationapi.dto.mapper.template.ApiMapper;
 import org.imannuel.moviereservationapi.dto.request.genre.GenreRequest;
 import org.imannuel.moviereservationapi.dto.response.genre.GenrePageResponse;
@@ -19,7 +20,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping(path = "/api/genres")
+@RequestMapping(path = Constant.GENRES_API)
 @RequiredArgsConstructor
 @SecurityRequirement(name = "Bearer Authentication")
 @Tag(name = "Genre", description = "API for managing movie genres.")
@@ -38,7 +39,7 @@ public class GenreController {
     )
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity createGenre(
+    public ResponseEntity<?> createGenre(
             @RequestBody GenreRequest genreRequest
     ) {
         genreService.createGenre(genreRequest);
@@ -53,7 +54,7 @@ public class GenreController {
             }
     )
     @GetMapping
-    public ResponseEntity getAllGenre(
+    public ResponseEntity<?> getAllGenre(
             @RequestParam(name = "page", required = false, defaultValue = "0") Integer page,
             @RequestParam(name = "size", required = false, defaultValue = "10") Integer size
     ) {
@@ -71,7 +72,7 @@ public class GenreController {
             }
     )
     @GetMapping("/{id}")
-    public ResponseEntity getGenreById(
+    public ResponseEntity<?> getGenreById(
             @PathVariable(name = "id") Long id
     ) {
         GenreResponse genre = genreService.getGenreById(id);
@@ -91,7 +92,7 @@ public class GenreController {
     )
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity updateGenre(
+    public ResponseEntity<?> updateGenre(
             @PathVariable(name = "id") Long id,
             @RequestBody GenreRequest genreRequest
     ) {
@@ -111,7 +112,7 @@ public class GenreController {
     )
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity deleteGenre(
+    public ResponseEntity<?> deleteGenre(
             @PathVariable(name = "id") Long id
     ) {
         genreService.deleteGenre(id);

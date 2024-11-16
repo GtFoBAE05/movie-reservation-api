@@ -12,4 +12,6 @@ public interface UserAccountService extends UserDetailsService {
     void updateUserAccount(UpdateUserRequest updateUserRequest);
 
     void updateRoleToAdmin(String id);
+
+    boolean existsByUsername(String username);
 }

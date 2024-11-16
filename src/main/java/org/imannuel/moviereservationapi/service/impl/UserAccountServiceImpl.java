@@ -1,7 +1,9 @@
 package org.imannuel.moviereservationapi.service.impl;
 
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.imannuel.moviereservationapi.constant.RoleEnum;
+import org.imannuel.moviereservationapi.dto.request.auth.RegisterRequest;
 import org.imannuel.moviereservationapi.dto.request.user.UpdateUserRequest;
 import org.imannuel.moviereservationapi.entity.Role;
 import org.imannuel.moviereservationapi.entity.UserAccount;
@@ -16,6 +18,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.UUID;
@@ -28,7 +31,24 @@ public class UserAccountServiceImpl implements UserAccountService {
     private final RoleService roleService;
     private final ValidationUtil validationUtil;
 
+    @PostConstruct
+    @Transactional(rollbackFor = Exception.class)
+    void init(){
+        if(!existsByUsername("admin")){
+            Role role = roleService.getRoleByName(RoleEnum.ROLE_ADMIN.name());
+            UserAccount userAccount = UserAccount.builder()
+                    .id(UUID.randomUUID())
+                    .username("admin")
+                    .email("admin@")
+                    .password(passwordEncoder.encode("secretpassword"))
+                    .role(role)
+                    .build();
+            userAccountRepository.insertUserAccount(userAccount);
+        }
+    }
+
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void createUserAccount(UserAccount userAccount) {
         Role role = roleService.getRoleByName(RoleEnum.ROLE_USER.name());
         UUID uuid = UUID.randomUUID();
@@ -39,6 +59,7 @@ public class UserAccountServiceImpl implements UserAccountService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public UserAccount getUserAccountById(String id) {
         return findUserAccountById(id);
     }
@@ -48,6 +69,7 @@ public class UserAccountServiceImpl implements UserAccountService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void updateUserAccount(UpdateUserRequest updateUserRequest) {
         validationUtil.validate(updateUserRequest);
 
@@ -57,6 +79,7 @@ public class UserAccountServiceImpl implements UserAccountService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void updateRoleToAdmin(String id) {
         UserAccount userAccount = findUserAccountById(id);
         Role role = roleService.getRoleByName(RoleEnum.ROLE_ADMIN.name());
@@ -67,9 +90,16 @@ public class UserAccountServiceImpl implements UserAccountService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         return userAccountRepository.findUserAccountByUsername(username).orElseThrow(
                 () -> new UsernameNotFoundException("Invalid Credential")
         );
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public boolean existsByUsername(String username) {
+        return userAccountRepository.existsUserAccountByUsername(username);
     }
 }

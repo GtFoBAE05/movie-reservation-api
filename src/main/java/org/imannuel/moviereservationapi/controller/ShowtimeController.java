@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.imannuel.moviereservationapi.constant.Constant;
 import org.imannuel.moviereservationapi.dto.mapper.template.ApiMapper;
 import org.imannuel.moviereservationapi.dto.request.showtime.ShowtimeRequest;
 import org.imannuel.moviereservationapi.dto.response.Seat.SeatListResponse;
@@ -19,7 +20,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping(path = "/api/showtimes")
+@RequestMapping(path = Constant.SHOWTIMES_API)
 @RequiredArgsConstructor
 @Tag(name = "Showtime Management", description = "APIs for managing movie showtimes")
 public class ShowtimeController {
@@ -36,7 +37,7 @@ public class ShowtimeController {
     )
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity createShowtime(
+    public ResponseEntity<?> createShowtime(
             @RequestBody ShowtimeRequest showtimeRequest
     ) {
         showtimeService.createShowtime(showtimeRequest);
@@ -53,7 +54,7 @@ public class ShowtimeController {
     )
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity updateShowtime(
+    public ResponseEntity<?> updateShowtime(
             @PathVariable(name = "id") String id,
             @RequestBody ShowtimeRequest showtimeRequest
     ) {
@@ -70,7 +71,7 @@ public class ShowtimeController {
             }
     )
     @GetMapping("/{id}")
-    public ResponseEntity getShowtimeById(
+    public ResponseEntity<?> getShowtimeById(
             @PathVariable(name = "id") String id
     ) {
         ShowtimeResponse showtime = showtimeService.getShowtimeById(id);
@@ -86,7 +87,7 @@ public class ShowtimeController {
             }
     )
     @GetMapping("/{id}/seats")
-    public ResponseEntity getAvailableSeatShowtime(
+    public ResponseEntity<?> getAvailableSeatShowtime(
             @PathVariable(name = "id") String id
     ) {
         SeatListResponse availableSeat = showtimeService.getAvailableSeat(id);
@@ -101,7 +102,7 @@ public class ShowtimeController {
             }
     )
     @GetMapping("/all")
-    public ResponseEntity getAllShowtime(
+    public ResponseEntity<?> getAllShowtime(
             @RequestParam(name = "page", required = false, defaultValue = "0") Integer page,
             @RequestParam(name = "size", required = false, defaultValue = "10") Integer size
     ) {
@@ -119,7 +120,7 @@ public class ShowtimeController {
             }
     )
     @GetMapping
-    public ResponseEntity getAvailableShowtimeBy(
+    public ResponseEntity<?> getAvailableShowtimeBy(
             @RequestParam(name = "date", required = false) String date,
             @RequestParam(name = "movie", required = false) String movieId,
             @RequestParam(name = "page", required = false, defaultValue = "0") Integer page,

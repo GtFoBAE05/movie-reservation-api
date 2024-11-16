@@ -50,21 +50,21 @@ public class ExceptionController {
     }
 
     @ExceptionHandler({InvalidDataAccessResourceUsageException.class})
-    public ResponseEntity<ApiTemplateResponse> handlingInvalidDataAccessResourceUsageException(InvalidDataAccessResourceUsageException e) {
+    public ResponseEntity<?> handlingInvalidDataAccessResourceUsageException(InvalidDataAccessResourceUsageException e) {
         return ApiMapper.basicMapper(
                 HttpStatus.BAD_REQUEST, "Invalid data to sort by", null
         );
     }
 
     @ExceptionHandler({ConstraintViolationException.class})
-    public ResponseEntity<ApiTemplateResponse> handlingConstraintViolationException(ConstraintViolationException e) {
+    public ResponseEntity<?> handlingConstraintViolationException(ConstraintViolationException e) {
         return ApiMapper.basicMapper(
                 HttpStatus.BAD_REQUEST, e.getMessage(), null
         );
     }
 
     @ExceptionHandler({MissingServletRequestParameterException.class})
-    public ResponseEntity<ApiTemplateResponse> handlingMissingServletRequestParameterExceptionn(MissingServletRequestParameterException e) {
+    public ResponseEntity<?> handlingMissingServletRequestParameterExceptionn(MissingServletRequestParameterException e) {
         return ApiMapper.basicMapper(
                 HttpStatus.BAD_REQUEST, e.getMessage(), null
         );
