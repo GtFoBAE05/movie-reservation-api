@@ -21,8 +21,8 @@ public interface GenreRepository extends JpaRepository<Genre, Long> {
     @Query(value = "SELECT id, name from m_genre where id = :id", nativeQuery = true)
     Optional<Genre> findGenreById(@Param("id") Long id);
 
-    @Query(value = "SELECT id, name from m_genre", nativeQuery = true)
-    List<Genre> getAllGenre();
+    @Query(value = "SELECT id, name from m_genre LIMIT :limit OFFSET :offset", nativeQuery = true)
+    List<Genre> getAllGenre(@Param("limit") int limit, @Param("offset") int offset);
 
     @Transactional
     @Modifying
@@ -41,4 +41,7 @@ public interface GenreRepository extends JpaRepository<Genre, Long> {
 
     @Query(value = "SELECT EXISTS (SELECT name FROM m_genre WHERE name ILIKE :name)", nativeQuery = true)
     boolean existsGenreByName(@Param("name") String name);
+
+    @Query(value = "SELECT COUNT(*) FROM m_genre", nativeQuery = true)
+    long countTotalGenres();
 }
