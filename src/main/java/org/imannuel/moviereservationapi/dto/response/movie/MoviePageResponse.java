@@ -9,6 +9,14 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class MovieListResponse {
+public class MoviePageResponse {
     private List<MovieResponse> movies;
+
+    private long totalElements;
+
+    private int totalPages;
+
+    private int currentPage;
+
+    private int pageSize;
 }

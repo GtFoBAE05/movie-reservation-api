@@ -61,8 +61,9 @@ public interface MovieRepository extends JpaRepository<Movie, UUID> {
     Optional<Movie> findMovieById(@Param("id") UUID id);
 
     @Query(value = "SELECT m.id, m.title, m.description, m.release_date, m.duration_in_minutes " +
-            "FROM m_movie m where m.title LIKE CONCAT(:title, '%')", nativeQuery = true)
-    List<Movie> getAllMovie(@Param("title") String title);
+            "FROM m_movie m where m.title LIKE CONCAT(:title, '%') " +
+            "LIMIT :limit OFFSET :offset", nativeQuery = true)
+    List<Movie> getAllMovie(@Param("title") String title, @Param("limit") int limit, @Param("offset") int offset);
 
     @Transactional
     @Modifying
@@ -71,4 +72,7 @@ public interface MovieRepository extends JpaRepository<Movie, UUID> {
 
     @Query(value = "SELECT EXISTS (SELECT title from m_movie where title = :title)", nativeQuery = true)
     boolean existsMovieByName(@Param("title") String title);
+
+    @Query(value = "SELECT COUNT(*) FROM m_movie", nativeQuery = true)
+    public long countTotalMovies();
 }

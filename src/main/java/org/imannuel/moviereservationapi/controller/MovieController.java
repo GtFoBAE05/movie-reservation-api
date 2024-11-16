@@ -7,7 +7,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.imannuel.moviereservationapi.dto.mapper.template.ApiMapper;
-import org.imannuel.moviereservationapi.dto.response.movie.MovieListResponse;
+import org.imannuel.moviereservationapi.dto.response.movie.MoviePageResponse;
 import org.imannuel.moviereservationapi.dto.response.movie.MovieResponse;
 import org.imannuel.moviereservationapi.dto.response.template.ApiTemplateResponse;
 import org.imannuel.moviereservationapi.service.MovieService;
@@ -43,7 +43,7 @@ public class MovieController {
             @RequestParam(name = "title") String title,
             @RequestParam(name = "description") String description,
             @RequestParam(name = "durationInMinute") Integer durationInMinute,
-            @RequestParam(name = "genres") String genres,
+            @RequestParam(name = "genres") List<Long>  genres,
             @RequestParam(name = "releaseDate") String releaseDate
     ) {
         movieService.insertMovie(multipartFiles, title, description, durationInMinute, genres, releaseDate);
@@ -59,10 +59,14 @@ public class MovieController {
     )
     @GetMapping
     public ResponseEntity searchMovie(
-            @RequestParam(value = "title", required = false) String title
+            @RequestParam(value = "title", required = false) String title,
+            @RequestParam(name = "page", required = false, defaultValue = "0") Integer page,
+            @RequestParam(name = "size", required = false, defaultValue = "10") Integer size
     ) {
-        MovieListResponse movieListResponse = movieService.searchMovie(title);
-        return ApiMapper.basicMapper(HttpStatus.OK, "Successfully retrieved movie list", movieListResponse);
+        MoviePageResponse moviePageResponse = movieService.searchMovie(title, page, size);
+        return ApiMapper.paginationMapper(HttpStatus.OK, "Successfully retrieved movies",
+                moviePageResponse.getMovies(), moviePageResponse.getTotalElements(),
+                moviePageResponse.getPageSize(), moviePageResponse.getCurrentPage());
     }
 
     @Operation(
@@ -100,7 +104,7 @@ public class MovieController {
             @RequestParam(name = "title") String title,
             @RequestParam(name = "description") String description,
             @RequestParam(name = "durationInMinute") Integer durationInMinute,
-            @RequestParam(name = "genres") String genres,
+            @RequestParam(name = "genres") List<Long> genres,
             @RequestParam(name = "releaseDate") String releaseDate
     ) {
         movieService.updateMovieById(id, multipartFiles, title, description, durationInMinute, genres, releaseDate);
