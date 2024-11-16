@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.imannuel.moviereservationapi.dto.mapper.template.ApiMapper;
 import org.imannuel.moviereservationapi.dto.response.template.ApiTemplateResponse;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.InvalidDataAccessResourceUsageException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -45,6 +46,13 @@ public class ExceptionController {
         }
 
         return ApiMapper.basicMapper(status, message, null);
+    }
+
+    @ExceptionHandler({InvalidDataAccessResourceUsageException.class})
+    public ResponseEntity<ApiTemplateResponse> handlingInvalidDataAccessResourceUsageException(InvalidDataAccessResourceUsageException e) {
+        return ApiMapper.basicMapper(
+                HttpStatus.BAD_REQUEST, "Invalid data to sort by", null
+        );
     }
 
     @ExceptionHandler({ConstraintViolationException.class})
