@@ -23,6 +23,7 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler {
         ApiTemplateResponse<?> apiTemplateResponse = new ApiTemplateResponse<>(
                 HttpStatus.FORBIDDEN.value(),
                 accessDeniedException.getMessage(),
+                null,
                 null
         );
         String responseString = objectMapper.writeValueAsString(apiTemplateResponse);
