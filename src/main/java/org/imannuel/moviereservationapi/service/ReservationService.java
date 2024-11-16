@@ -15,8 +15,6 @@ public interface ReservationService {
 
     void cancelReservation(String reservationId);
 
-    boolean checkIsReservationIsCancelable(String reservationId);
-
     Reservation findReservationById(String reservationId);
 
     ReservationResponse getReservationById(String reservationId);

@@ -19,6 +19,4 @@ public interface MovieImageService {
     FileDownloadResponse downloadMovieImage(String id);
 
     MovieImage findMovieImageById(String id);
-
-    List<MovieImage> getAllMovieImageByMovieId(String id);
 }

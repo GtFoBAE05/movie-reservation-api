@@ -9,6 +9,7 @@ import org.imannuel.moviereservationapi.dto.response.genre.GenrePageResponse;
 import org.imannuel.moviereservationapi.dto.response.genre.GenreResponse;
 import org.imannuel.moviereservationapi.dto.response.movie.MoviePageResponse;
 import org.imannuel.moviereservationapi.dto.response.movie.MovieResponse;
+import org.imannuel.moviereservationapi.entity.Genre;
 import org.imannuel.moviereservationapi.entity.Movie;
 import org.imannuel.moviereservationapi.entity.MovieImage;
 import org.imannuel.moviereservationapi.repository.MovieRepository;
@@ -135,11 +136,11 @@ public class MovieServiceImpl implements MovieService {
         Movie movie = findMovieById(id);
 
         List<Long> genreList = movie.getGenres().stream()
-                .map(genre -> genre.getId())
+                .map(Genre::getId)
                 .collect(Collectors.toList());
 
         if (movie.getImages() != null && !movie.getImages().isEmpty()) {
-            movie.getImages().stream().forEach(
+            movie.getImages().forEach(
                     movieImage -> deleteMovieImage(id)
             );
         }

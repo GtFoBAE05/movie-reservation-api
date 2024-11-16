@@ -29,7 +29,8 @@ public interface MovieRepository extends JpaRepository<Movie, UUID> {
     @Transactional
     @Modifying
     @Query(value = "INSERT INTO m_movie_genre (movie_id, genre_id) " +
-            "SELECT :movieId, mg.id FROM m_genre mg WHERE mg.id IN :genreId " +
+            "SELECT :movieId, mg.id FROM m_genre mg " +
+            "WHERE mg.id IN :genreId " +
             "AND mg.id NOT IN (SELECT genre_id FROM m_movie_genre WHERE movie_id = :movieId)", nativeQuery = true)
     void addGenresList(@Param("movieId") UUID movieId, @Param("genreId") List<Long> genreId);
 
@@ -74,5 +75,5 @@ public interface MovieRepository extends JpaRepository<Movie, UUID> {
     boolean existsMovieByName(@Param("title") String title);
 
     @Query(value = "SELECT COUNT(*) FROM m_movie", nativeQuery = true)
-    public long countTotalMovies();
+    long countTotalMovies();
 }

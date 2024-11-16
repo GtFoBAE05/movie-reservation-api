@@ -18,15 +18,15 @@ import java.util.Arrays;
 public class PaymentStatusServiceImpl implements PaymentStatusService {
     private final PaymentStatusRepository paymentStatusRepository;
 
-//    @PostConstruct
-//    @Transactional(rollbackFor = Exception.class)
-//    public void init(){
-//        Arrays.stream(PaymentStatusEnum.values())
-//                .map(paymentStatusEnum -> paymentStatusEnum.name())
-//                .filter(name -> !checkIsPaymentStatusExists(name))
-//                .forEach(s -> createPaymentStatus(s));
-//
-//    }
+    @PostConstruct
+    @Transactional(rollbackFor = Exception.class)
+    public void init(){
+        Arrays.stream(PaymentStatusEnum.values())
+                .map(Enum::name)
+                .filter(name -> !checkIsPaymentStatusExists(name))
+                .forEach(this::createPaymentStatus);
+
+    }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -35,12 +35,6 @@ public class PaymentStatusServiceImpl implements PaymentStatusService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Payment status already exists");
         }
         paymentStatusRepository.insertPaymentStatus(name);
-    }
-
-    @Override
-    public PaymentStatus findPaymentStatusById(Integer id) {
-        return paymentStatusRepository.findPaymentStatusById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Payment status not found"));
     }
 
     @Override

@@ -114,5 +114,4 @@ public class FileStorageServiceImpl implements FileStorageService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "invalid extensions type");
         }
     }
-
 }

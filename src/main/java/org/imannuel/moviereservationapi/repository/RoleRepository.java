@@ -12,7 +12,6 @@ import java.util.Optional;
 
 @Repository
 public interface RoleRepository extends JpaRepository<Role, Long> {
-
     @Query(value = "SELECT EXISTS (SELECT name FROM m_role WHERE name = :name)", nativeQuery = true)
     boolean existsRoleByName(@Param("name") String name);
 
@@ -23,5 +22,4 @@ public interface RoleRepository extends JpaRepository<Role, Long> {
 
     @Query(value = "SELECT id, name FROM m_role WHERE name = :name", nativeQuery = true)
     Optional<Role> findRoleByName(@Param("name") String name);
-
 }

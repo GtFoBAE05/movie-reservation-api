@@ -23,7 +23,6 @@ import java.time.temporal.ChronoUnit;
 
 @Service
 @RequiredArgsConstructor
-@Slf4j
 public class JwtServiceImpl implements JwtService {
     @Value("${movie.reservation.jwt-secret}")
     private String SECRET_KEY;
@@ -34,7 +33,6 @@ public class JwtServiceImpl implements JwtService {
 
     @Override
     public String generateToken(UserAccount userAccount) {
-        log.info("Generating JWT Token for userAccount with id " + userAccount.getId());
         try {
             Algorithm algorithm = Algorithm.HMAC256(SECRET_KEY.getBytes(StandardCharsets.UTF_8));
             return JWT.create()
@@ -44,7 +42,6 @@ public class JwtServiceImpl implements JwtService {
                     .withClaim("role", userAccount.getRole().getName().toString())
                     .sign(algorithm);
         } catch (JWTCreationException e) {
-            log.error("Error creating token for userAccount with id " + userAccount.getId());
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error when creating JWT");
         }
     }

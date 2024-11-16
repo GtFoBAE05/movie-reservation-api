@@ -63,7 +63,8 @@ public interface ReservationRepository extends JpaRepository<Reservation, UUID> 
             "FROM t_reservation tr " +
             "JOIN t_showtime ts " +
             "ON ts.id = tr.showtime_id " +
-            "WHERE ts.start_date_time > CURRENT_TIMESTAMP AND ts.start_date_time  > CURRENT_TIMESTAMP + INTERVAL '1' DAY  AND tr.id = :reservationId", nativeQuery = true)
+            "WHERE ts.start_date_time > CURRENT_TIMESTAMP AND ts.start_date_time  > CURRENT_TIMESTAMP + INTERVAL '1' DAY  " +
+            "AND tr.id = :reservationId", nativeQuery = true)
     boolean checkIsReservationIsCancelable(@Param("reservationId") UUID reservationId);
 
     @Transactional(readOnly = true)

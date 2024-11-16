@@ -17,7 +17,7 @@ import org.springframework.web.server.ResponseStatusException;
 @Slf4j
 public class ExceptionController {
     @ExceptionHandler({ResponseStatusException.class})
-    public ResponseEntity<ApiTemplateResponse> handlingResponseStatusException(ResponseStatusException e) {
+    public ResponseEntity<?> handlingResponseStatusException(ResponseStatusException e) {
         return ApiMapper.basicMapper(
                 HttpStatus.valueOf(e.getStatusCode().value()), e.getReason(), null
         );

@@ -15,7 +15,9 @@ import java.util.UUID;
 public interface UserAccountRepository extends JpaRepository<UserAccount, UUID> {
     @Modifying
     @Transactional
-    @Query(value = "INSERT INTO m_user (id, username, email, password, role_id) VALUES (:#{#userAccount.id}, :#{#userAccount.username}, :#{#userAccount.email}, :#{#userAccount.password}, :#{#userAccount.role.id})", nativeQuery = true)
+    @Query(value = "INSERT INTO m_user (id, username, email, password, role_id) " +
+            "VALUES (:#{#userAccount.id}, :#{#userAccount.username}, :#{#userAccount.email}, " +
+            ":#{#userAccount.password}, :#{#userAccount.role.id})", nativeQuery = true)
     void insertUserAccount(@Param("userAccount") UserAccount userAccount);
 
     @Query(value = "SELECT id, username, email, password, role_id from m_user where id = :id", nativeQuery = true)

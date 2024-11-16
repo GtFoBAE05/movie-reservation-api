@@ -1,6 +1,5 @@
 package org.imannuel.moviereservationapi.service.impl;
 
-import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.imannuel.moviereservationapi.dto.request.auth.LoginRequest;
 import org.imannuel.moviereservationapi.dto.request.auth.RegisterRequest;

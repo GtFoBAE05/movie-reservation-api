@@ -40,5 +40,4 @@ public class UserAccount implements UserDetails {
         List<Role> myRoles = List.of(role);
         return myRoles.stream().map(userRole -> new SimpleGrantedAuthority(userRole.getName().name())).toList();
     }
-
 }

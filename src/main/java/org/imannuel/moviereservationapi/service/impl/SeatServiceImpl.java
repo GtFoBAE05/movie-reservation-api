@@ -33,16 +33,16 @@ public class SeatServiceImpl implements SeatService {
     public void init() {
         List<Room> rooms = SeedData.roomSeedData.stream()
                 .map(roomService::findRoomByName)
-                .filter(room -> room != null)
+                .filter(Objects::nonNull)
                 .toList();
 
         rooms
-                .forEach(room -> {
-                    SeedData.seatSeedData.stream()
-                            .filter(seatCode -> !checkIsSeatExists(seatCode, room.getId()))
-                            .map(seatCode -> new SeatRequest(seatCode, room.getId()))
-                            .forEach(seatRequest -> createSeat(seatRequest));
-                });
+                .forEach(room ->
+                        SeedData.seatSeedData.stream()
+                                .filter(seatCode -> !checkIsSeatExists(seatCode, room.getId()))
+                                .map(seatCode -> new SeatRequest(seatCode, room.getId()))
+                                .forEach(this::createSeat)
+                );
     }
 
     @Override

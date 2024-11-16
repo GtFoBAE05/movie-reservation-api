@@ -78,16 +78,14 @@ public interface ShowtimeRepository extends JpaRepository<Showtime, UUID> {
     boolean checkIsShowtimeIsReserveable(@Param("showtimeId") UUID showtimeId);
 
     @Query(value = "SELECT COUNT(*) FROM t_showtime", nativeQuery = true)
-    public long countTotalShowtime();
+    long countTotalShowtime();
 
     @Query(value = "SELECT COUNT(*) FROM t_showtime", nativeQuery = true)
-    public long countTotalHistoryShowtimes();
+    long countTotalHistoryShowtimes();
 
     @Query(value = "SELECT COUNT(*) FROM t_showtime " +
             "WHERE start_date_time >= CURRENT_TIMESTAMP " +
             "AND (CAST(:date AS DATE) IS NULL OR CAST(start_date_time AS DATE) = :date) " +
             "AND (:movieId IS NULL OR movie_id = :movieId)", nativeQuery = true)
-    public long countTotalFilteredShowtimes(@Param("date") LocalDate date, @Param("movieId") UUID movieId);
-
-
+    long countTotalFilteredShowtimes(@Param("date") LocalDate date, @Param("movieId") UUID movieId);
 }

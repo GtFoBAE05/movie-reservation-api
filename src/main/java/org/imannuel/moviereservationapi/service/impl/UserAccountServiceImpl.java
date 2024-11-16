@@ -3,7 +3,6 @@ package org.imannuel.moviereservationapi.service.impl;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.imannuel.moviereservationapi.constant.RoleEnum;
-import org.imannuel.moviereservationapi.dto.request.auth.RegisterRequest;
 import org.imannuel.moviereservationapi.dto.request.user.UpdateUserRequest;
 import org.imannuel.moviereservationapi.entity.Role;
 import org.imannuel.moviereservationapi.entity.UserAccount;
@@ -33,8 +32,8 @@ public class UserAccountServiceImpl implements UserAccountService {
 
     @PostConstruct
     @Transactional(rollbackFor = Exception.class)
-    void init(){
-        if(!existsByUsername("admin")){
+    void init() {
+        if (!existsByUsername("admin")) {
             Role role = roleService.getRoleByName(RoleEnum.ROLE_ADMIN.name());
             UserAccount userAccount = UserAccount.builder()
                     .id(UUID.randomUUID())
