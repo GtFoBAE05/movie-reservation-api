@@ -3,6 +3,7 @@ package org.imannuel.moviereservationapi.controller;
 import lombok.RequiredArgsConstructor;
 import org.imannuel.moviereservationapi.dto.mapper.template.ApiMapper;
 import org.imannuel.moviereservationapi.dto.request.reservation.ReservationRequest;
+import org.imannuel.moviereservationapi.dto.response.payment.PaymentResponse;
 import org.imannuel.moviereservationapi.dto.response.reservation.ReservationListResponse;
 import org.imannuel.moviereservationapi.dto.response.reservation.ReservationResponse;
 import org.imannuel.moviereservationapi.service.ReservationService;
@@ -21,8 +22,8 @@ public class ReservationController {
     public ResponseEntity createReservation(
             @RequestBody ReservationRequest reservationRequest
     ) {
-        reservationService.createReservation(reservationRequest);
-        return ApiMapper.basicMapper(HttpStatus.CREATED, "Success create reservation", null);
+        PaymentResponse paymentResponse = reservationService.createReservation(reservationRequest);
+        return ApiMapper.basicMapper(HttpStatus.CREATED, "Success create reservation", paymentResponse);
     }
 
     @DeleteMapping("/{id}")
@@ -47,4 +48,6 @@ public class ReservationController {
         ReservationResponse reservation = reservationService.getReservationById(id);
         return ApiMapper.basicMapper(HttpStatus.OK, "Success get reservation", reservation);
     }
+
+
 }

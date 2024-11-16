@@ -35,4 +35,9 @@ public class Reservation {
 
     @Column(name = "is_cancel", nullable = false)
     private Boolean isCancel;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "payment_id")
+    private Payment payment;
+
 }

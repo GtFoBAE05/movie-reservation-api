@@ -34,6 +34,7 @@ public class SecurityConfiguration {
                 .sessionManagement(config -> config.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(req ->
                         req.dispatcherTypeMatchers(DispatcherType.ERROR).permitAll()
+                                .requestMatchers(HttpMethod.POST, "/api/payments/**").permitAll()
                                 .requestMatchers(HttpMethod.POST, "/api/auth/login").permitAll()
                                 .requestMatchers(HttpMethod.POST, "/api/auth/register").permitAll()
                                 .requestMatchers(HttpMethod.GET, "/api/genres/**").permitAll()
