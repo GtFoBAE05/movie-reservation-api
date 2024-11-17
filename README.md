@@ -125,6 +125,7 @@ Complete endpoint documentation available on `/swagger-ui/index.html`
 - Java 17
 
 # Getting Started
+run project with maven:
 1. Clone repository
    `git clone https://github.com/GtFoBAE05/movie-reservation-api`
 2. Open project directory
@@ -133,7 +134,16 @@ Complete endpoint documentation available on `/swagger-ui/index.html`
 4. Run application
    `mvn spring-boot:run`
 
+run project with docker compose:
+1. Clone repository
+   `git clone https://github.com/GtFoBAE05/movie-reservation-api`
+2. Open project directory
+3. Run application
+   `docker-compose up --build`
+
 **NOTE**:
-For development purpose: initial admin account is
-username: admin
-password: secretpassword
+For development and testing purpose: 
+- initial admin account is
+    - username: admin
+    - password: secretpassword
+- also included payment gateway API key for development and testing purposes
