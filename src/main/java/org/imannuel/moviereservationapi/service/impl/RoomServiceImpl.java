@@ -43,22 +43,26 @@ public class RoomServiceImpl implements RoomService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Room findRoomById(Long id) {
         return roomRepository.findRoomById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Room not found"));
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Room findRoomByName(String name) {
         return roomRepository.findRoomByName(name).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Room not found"));
     }
 
     @Override
+    @Transactional(readOnly = true)
     public RoomResponse getRoomById(Long id) {
         Room room = findRoomById(id);
         return RoomMapper.roomToRoomResponse(room);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public RoomPageResponse getAllRoom(Integer page, Integer size) {
         int offset = PaginationUtil.calculateOffset(page, size);
         long totalRooms = roomRepository.countTotalRooms();

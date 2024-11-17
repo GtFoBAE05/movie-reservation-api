@@ -55,18 +55,23 @@ public class ReservationServiceImpl implements ReservationService {
                 .isCancel(false)
                 .build();
         reservationRepository.insertReservation(reservation);
-
-        for (String seatId : reservationRequest.getSeatId()) {
-            if (!checkIsSeatAvailable(seatId, showtime.getId().toString())) {
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Seat is not available");
-            }
-            createSeatReservation(reservation.getId().toString(), seatId);
-        }
+        createSeatListReservation(reservation, reservationRequest);
 
         Payment payment = paymentService.createPayment(reservation, reservationRequest);
         reservation.setPayment(payment);
         reservationRepository.updateReservationPayment(reservation);
         return PaymentMapper.paymentToPaymentResponse(payment);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void createSeatListReservation(Reservation reservation, ReservationRequest reservationRequest) {
+        for (String seatId : reservationRequest.getSeatId()) {
+            if (!checkIsSeatAvailable(seatId, reservation.getShowtime().getId().toString())) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Seat is not available");
+            }
+            createSeatReservation(reservation.getId().toString(), seatId);
+        }
     }
 
     @Override

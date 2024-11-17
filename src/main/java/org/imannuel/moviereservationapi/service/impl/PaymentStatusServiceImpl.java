@@ -38,12 +38,14 @@ public class PaymentStatusServiceImpl implements PaymentStatusService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public PaymentStatus findPaymentStatusByName(String name) {
         return paymentStatusRepository.findPaymentStatusByName(name)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Payment status not found"));
     }
 
     @Override
+    @Transactional(readOnly = true)
     public boolean checkIsPaymentStatusExists(String name) {
         return paymentStatusRepository.existsPaymentStatusByName(name);
     }

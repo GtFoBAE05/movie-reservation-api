@@ -28,6 +28,7 @@ public class RoleServiceImpl implements RoleService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Boolean checkIsRoleExist(String name) {
         return roleRepository.existsRoleByName(name);
     }
@@ -38,11 +39,13 @@ public class RoleServiceImpl implements RoleService {
         roleRepository.insertRole(name);
     }
 
+    @Transactional(readOnly = true)
     public Role findRoleByName(String name) {
         return roleRepository.findRoleByName(name).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Role not found"));
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Role getRoleByName(String name) {
         return findRoleByName(name);
     }
