@@ -141,7 +141,7 @@ run project with docker compose:
 3. Run application
    `docker-compose up --build`
 
-Testing:
+# Testing:
 current testing coverage for service layer: 80% classes and 63% lines covered
 ![servicetestingcoverage.png](servicetestingcoverage.png)
 
