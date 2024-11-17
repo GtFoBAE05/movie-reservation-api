@@ -133,6 +133,13 @@ public class ShowtimeServiceImpl implements ShowtimeService {
         return SeatMapper.seatListToSeatListResponse(availableSeat);
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public boolean checkIsShowtimeIsReserveable(String showtimeId) {
+        findShowtimeById(showtimeId);
+        return showtimeRepository.checkIsShowtimeIsReserveable(UUID.fromString(showtimeId));
+    }
+
     private Showtime buildShowtime(ShowtimeRequest showtimeRequest) {
         Movie movie = movieService.findMovieById(showtimeRequest.getMovieId());
         Room room = roomService.findRoomById(showtimeRequest.getRoomId());
@@ -144,12 +151,5 @@ public class ShowtimeServiceImpl implements ShowtimeService {
                 .startDateTime(startDateTime)
                 .price(showtimeRequest.getPrice())
                 .build();
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public boolean checkIsShowtimeIsReserveable(String showtimeId) {
-        findShowtimeById(showtimeId);
-        return showtimeRepository.checkIsShowtimeIsReserveable(UUID.fromString(showtimeId));
     }
 }

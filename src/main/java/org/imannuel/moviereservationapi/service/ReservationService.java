@@ -9,6 +9,8 @@ import org.imannuel.moviereservationapi.entity.Reservation;
 public interface ReservationService {
     PaymentResponse createReservation(ReservationRequest reservationRequest);
 
+    void createSeatListReservation(Reservation reservation, ReservationRequest reservationRequest);
+
     void createSeatReservation(String reservationId, String seatId);
 
     boolean checkIsSeatAvailable(String seatId, String showtimeId);

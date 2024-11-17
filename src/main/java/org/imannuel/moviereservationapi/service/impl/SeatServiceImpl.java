@@ -36,13 +36,11 @@ public class SeatServiceImpl implements SeatService {
                 .filter(Objects::nonNull)
                 .toList();
 
-        rooms
-                .forEach(room ->
-                        SeedData.seatSeedData.stream()
-                                .filter(seatCode -> !checkIsSeatExists(seatCode, room.getId()))
-                                .map(seatCode -> new SeatRequest(seatCode, room.getId()))
-                                .forEach(this::createSeat)
-                );
+        rooms.forEach(room -> SeedData.seatSeedData.stream()
+                .filter(seatCode -> !checkIsSeatExists(seatCode, room.getId()))
+                .map(seatCode -> new SeatRequest(seatCode, room.getId()))
+                .forEach(this::createSeat)
+        );
     }
 
     @Override
@@ -60,11 +58,13 @@ public class SeatServiceImpl implements SeatService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Seat findSeatById(String id) {
         return seatRepository.findSeatById(UUID.fromString(id)).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Seat not found"));
     }
 
     @Override
+    @Transactional(readOnly = true)
     public SeatListResponse findSeatByRoomId(Long id) {
         List<Seat> seats = seatRepository.findSeatByRoomId(id);
         return SeatMapper.seatListToSeatListResponse(seats);
@@ -91,11 +91,13 @@ public class SeatServiceImpl implements SeatService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Seat> getAvailableSeatForShowtime(String showtimeId) {
         return seatRepository.getAvailableSeat(UUID.fromString(showtimeId));
     }
 
     @Override
+    @Transactional(readOnly = true)
     public boolean checkIsSeatExists(String seatCode, Long roomId) {
         return seatRepository.seatExistsBySeatCode(seatCode, roomId);
     }

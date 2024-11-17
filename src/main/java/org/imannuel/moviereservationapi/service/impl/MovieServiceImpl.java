@@ -77,6 +77,7 @@ public class MovieServiceImpl implements MovieService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void insertMovieGenre(UUID movieId, Long genreId) {
         movieRepository.insertMovieGenre(movieId, genreId);
     }
@@ -103,17 +104,20 @@ public class MovieServiceImpl implements MovieService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Movie findMovieById(String id) {
         return movieRepository.findMovieById(UUID.fromString(id)).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Movie not found"));
     }
 
     @Override
+    @Transactional(readOnly = true)
     public MovieResponse getMovieById(String id) {
         Movie movie = findMovieById(id);
         return MovieMapper.movieToMovieResponse(movie);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public MoviePageResponse searchMovie(String title, Integer page, Integer size) {
         int offset = PaginationUtil.calculateOffset(page, size);
         long totalMovies = movieRepository.countTotalMovies();
@@ -149,17 +153,15 @@ public class MovieServiceImpl implements MovieService {
         movieRepository.deleteMovieById(UUID.fromString(id));
     }
 
-    @Transactional(rollbackFor = Exception.class)
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void updateMovieImage(String imageId, MultipartFile file) {
         movieImageService.updateMovieImage(imageId, file);
     }
 
-    @Transactional(rollbackFor = Exception.class)
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void deleteMovieImage(String id) {
         movieImageService.deleteMovieImageById(id);
     }
-
-
 }

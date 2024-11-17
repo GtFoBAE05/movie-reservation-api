@@ -54,16 +54,19 @@ public class GenreServiceImpl implements GenreService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Genre findGenreById(Long id) {
         return genreRepository.findGenreById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Genre is not exists"));
     }
 
     @Override
+    @Transactional(readOnly = true)
     public GenreResponse getGenreById(Long id) {
         return GenreMapper.genreToGenreResponse(findGenreById(id));
     }
 
     @Override
+    @Transactional(readOnly = true)
     public GenrePageResponse getAllGenre(Integer page, Integer size) {
         int offset = PaginationUtil.calculateOffset(page, size);
         long totalGenres = genreRepository.countTotalGenres();
@@ -97,6 +100,7 @@ public class GenreServiceImpl implements GenreService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public boolean checkIsGenreExists(String name) {
         return genreRepository.existsGenreByName(name);
     }
