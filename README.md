@@ -145,6 +145,9 @@ run project with docker compose:
 current testing coverage for service layer: 80% classes and 63% lines covered
 ![servicetestingcoverage.png](servicetestingcoverage.png)
 
+current overal coverage:
+![overalcoverage.png](overalcoverage.png)
+
 **NOTE**:
 For development and testing purpose: 
 - initial admin account is
