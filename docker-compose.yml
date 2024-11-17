@@ -13,7 +13,7 @@ services:
       SPRING_DATASOURCE_PASSWORD: password
       JWT_SECRET: 4e77bd17b1d09679c550a0ab138cf6073a77bd76e41bbed80cf7758ebafff966
       JWT_EXPIRATION_IN_MINUTES_ACCESS_TOKEN: 240
-      ROOT_PATH_DIRECTORY: /home/enigma/Downloads/movie-reservation/file
+      ROOT_PATH_DIRECTORY: /app/movie-reservation
     networks:
       - movie-reservation-network
     depends_on:
@@ -29,6 +29,7 @@ services:
       - "5434:5432"
     networks:
       - movie-reservation-network
+    restart: always
     volumes:
       - db_data:/var/lib/postgresql/data
 
