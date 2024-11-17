@@ -87,6 +87,7 @@ public class SeatServiceImpl implements SeatService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void deleteSeat(String id) {
+        findSeatById(id);
         seatRepository.deleteSeat(UUID.fromString(id));
     }
 

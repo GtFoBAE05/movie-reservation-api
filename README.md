@@ -1,4 +1,3 @@
-
 # Movie Reservation API
 
 # Technologies Used
@@ -16,7 +15,7 @@
 - Swagger
 - Midtrans
 
-# Database:
+# Database design:
 - role: type of role
 - payment_status: type of available payment status
 - user: store user and role detail
@@ -141,6 +140,10 @@ run project with docker compose:
 2. Open project directory
 3. Run application
    `docker-compose up --build`
+
+Testing:
+current testing coverage for service layer: 80% classes and 63% lines covered
+![servicetestingcoverage.png](servicetestingcoverage.png)
 
 **NOTE**:
 For development and testing purpose: 
