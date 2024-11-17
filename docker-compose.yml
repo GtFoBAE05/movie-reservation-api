@@ -1,0 +1,41 @@
+services:
+  movie-reservation-api:
+    image: movie-reservation-api
+    container_name: movie-reservation-api
+    build:
+      context: .
+    ports:
+      - "4000:4000"
+    environment:
+      SPRING_APPLICATION_NAME: movie-reservation-api
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/movie-reservation
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: password
+      JWT_SECRET: 4e77bd17b1d09679c550a0ab138cf6073a77bd76e41bbed80cf7758ebafff966
+      JWT_EXPIRATION_IN_MINUTES_ACCESS_TOKEN: 240
+      ROOT_PATH_DIRECTORY: /home/enigma/Downloads/movie-reservation/file
+    networks:
+      - movie-reservation-network
+    depends_on:
+      - db
+
+  db:
+    image: postgres:alpine3.20
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: movie-reservation
+    ports:
+      - "5434:5432"
+    networks:
+      - movie-reservation-network
+    volumes:
+      - db_data:/var/lib/postgresql/data
+
+networks:
+  movie-reservation-network:
+    name: movie-reservation-network
+    driver: bridge
+
+volumes:
+  db_data:
