@@ -35,12 +35,15 @@ class GenreServiceImplTest {
 
     @Test
     void shoulCallInsertGenreWhenInsertGenre() {
-        String genreName = "ACTION";
+        Genre expectedGenre = Genre.builder()
+                .id(1L)
+                .name("ACTION")
+                .build();
 
-        genreRepository.insertGenre(genreName);
+        genreService.insertGenre(expectedGenre);
 
         Mockito.verify(genreRepository,
-                Mockito.times(1)).insertGenre(genreName);
+                Mockito.times(1)).insertGenre(expectedGenre.getName());
     }
 
     @Test
@@ -141,7 +144,7 @@ class GenreServiceImplTest {
         int offset = PaginationUtil.calculateOffset(page, size);
         long totalElements = 1L;
         int totalPages = PaginationUtil.calculateTotalPages(totalElements, size);
-        
+
         List<Genre> genresList = List.of(Genre.builder()
                 .id(1L)
                 .name("ACTION")

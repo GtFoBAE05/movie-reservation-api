@@ -18,7 +18,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @ExtendWith(MockitoExtension.class)
 class RoleServiceImplTest {
-
     @Mock
     private RoleRepository roleRepository;
 
@@ -84,5 +83,4 @@ class RoleServiceImplTest {
         assertEquals(expectedRole.getName(), role.getName());
         Mockito.verify(roleRepository, Mockito.times(1)).findRoleByName(name);
     }
-
 }

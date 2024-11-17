@@ -220,8 +220,6 @@ class SeatServiceImplTest {
 
         assertEquals(expectedSeat.size(), availableSeatForShowtime.size());
         Mockito.verify(seatRepository, Mockito.times(1)).getAvailableSeat(showtimeId);
-
-
     }
 
 }

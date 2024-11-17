@@ -106,7 +106,7 @@ class RoomServiceImplTest {
         int offset = PaginationUtil.calculateOffset(page, size);
         long totalElements = 1L;
         int totalPages = PaginationUtil.calculateTotalPages(totalElements, size);
-        ;
+
         List<Room> roomList = List.of(Room.builder()
                 .id(1L)
                 .name("Room 1")
@@ -172,5 +172,4 @@ class RoomServiceImplTest {
         Mockito.verify(roomRepository, Mockito.times(1)).deleteSeatsByRoomId(id);
         Mockito.verify(roomRepository, Mockito.times(1)).deleteRoom(id);
     }
-
 }
