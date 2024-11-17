@@ -34,7 +34,7 @@ public class UserController {
     )
     @PostMapping("/{id}/promote")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity promoteToAdmin(
+    public ResponseEntity<?> promoteToAdmin(
             @PathVariable("id") String id
     ) {
         userAccountService.updateRoleToAdmin(id);
@@ -51,7 +51,7 @@ public class UserController {
             }
     )
     @PutMapping
-    public ResponseEntity updateUserAccount(
+    public ResponseEntity<?> updateUserAccount(
             @RequestBody UpdateUserRequest updateUserRequest
     ) {
         userAccountService.updateUserAccount(updateUserRequest);

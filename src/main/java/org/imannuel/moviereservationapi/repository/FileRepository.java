@@ -9,18 +9,10 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
 import java.util.UUID;
 
 @Repository
 public interface FileRepository extends JpaRepository<File, UUID> {
-    @Transactional(rollbackFor = Exception.class)
-    @Modifying
-    @Query(value = "SELECT id, content_type, filename, path, size " +
-            "FROM m_file " +
-            "WHERE id = :id", nativeQuery = true)
-    Optional<MovieImage> findFileById(@Param("id") UUID id);
-
     @Transactional(rollbackFor = Exception.class)
     @Modifying
     @Query(value = "INSERT INTO m_file(id, content_type, filename, path, size) " +

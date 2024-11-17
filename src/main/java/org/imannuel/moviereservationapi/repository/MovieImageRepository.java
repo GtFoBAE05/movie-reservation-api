@@ -9,23 +9,15 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @Repository
 public interface MovieImageRepository extends JpaRepository<MovieImage, UUID> {
     @Transactional(readOnly = true)
-    @Modifying
-    @Query(value = "SELECT id, movie_id " +
-            "FROM m_movie_image " +
-            "WHERE id = :id", nativeQuery = true)
-    Optional<MovieImage> findMovieImageById(@Param("id") UUID id);
-
-    @Transactional(readOnly = true)
     @Query(value = "SELECT id, movie_id " +
             "FROM m_movie_image " +
             "WHERE movie_id = :id", nativeQuery = true)
-    List<MovieImage> getAllMovieImageByMovieId(@Param("id")UUID id);
+    List<MovieImage> getAllMovieImageByMovieId(@Param("id") UUID id);
 
     @Transactional(rollbackFor = Exception.class)
     @Modifying

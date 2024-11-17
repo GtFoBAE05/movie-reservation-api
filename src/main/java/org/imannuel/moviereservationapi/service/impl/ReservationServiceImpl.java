@@ -93,16 +93,6 @@ public class ReservationServiceImpl implements ReservationService {
 
     @Override
     @Transactional(readOnly = true)
-    public boolean checkIsReservationIsCancelable(String reservationId) {
-        boolean isCancelable = reservationRepository.checkIsReservationIsCancelable(UUID.fromString(reservationId));
-        if (!isCancelable) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Reservation cant be canceled");
-        }
-        return true;
-    }
-
-    @Override
-    @Transactional(readOnly = true)
     public Reservation findReservationById(String reservationId) {
         return reservationRepository.findReservationById(UUID.fromString(reservationId))
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Reservation not found"));

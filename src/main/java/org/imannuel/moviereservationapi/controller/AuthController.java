@@ -32,7 +32,7 @@ public class AuthController {
                     @ApiResponse(responseCode = "200", description = "Success Register user", content = @Content(schema = @Schema(implementation = ApiTemplateResponse.class))),
             })
     @PostMapping("/register")
-    public ResponseEntity<ApiTemplateResponse> registerUser(
+    public ResponseEntity<?> registerUser(
             @RequestBody RegisterRequest registerRequest
     ) {
         authService.register(registerRequest);
@@ -47,7 +47,7 @@ public class AuthController {
                     @ApiResponse(responseCode = "401", description = "Invalid login credentials", content = @Content(schema = @Schema(implementation = ApiTemplateResponse.class)))
             })
     @PostMapping("/login")
-    public ResponseEntity<ApiTemplateResponse> loginUser(
+    public ResponseEntity<?> loginUser(
             @RequestBody LoginRequest loginRequest
     ) {
         LoginResponse login = authService.login(loginRequest);

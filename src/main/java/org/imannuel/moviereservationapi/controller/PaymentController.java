@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.imannuel.moviereservationapi.constant.Constant;
 import org.imannuel.moviereservationapi.dto.mapper.template.ApiMapper;
 import org.imannuel.moviereservationapi.dto.request.midtrans.MidtransNotificationRequest;
 import org.imannuel.moviereservationapi.dto.response.template.ApiTemplateResponse;
@@ -19,7 +20,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping(path = "/api/payments")
+@RequestMapping(path = Constant.PAYMENTS_API)
 @RequiredArgsConstructor
 @Tag(name = "Payment", description = "APIs for managing payments")
 public class PaymentController {
@@ -33,7 +34,7 @@ public class PaymentController {
             })
 
     @PostMapping(path = "/notifications")
-    public ResponseEntity handleNotification(@RequestBody MidtransNotificationRequest request) {
+    public ResponseEntity<?> handleNotification(@RequestBody MidtransNotificationRequest request) {
         paymentService.receivePaymentNotification(request);
         return ApiMapper.basicMapper(HttpStatus.OK, "OK", null);
     }

@@ -94,24 +94,6 @@ public class ShowtimeServiceImpl implements ShowtimeService {
 
     @Override
     @Transactional(readOnly = true)
-    public ShowtimePageResponse getAllHistoryShowtime(Integer page, Integer size) {
-        int offset = PaginationUtil.calculateOffset(page, size);
-        long totalShowtimes = showtimeRepository.countTotalHistoryShowtimes();
-        int totalPages = PaginationUtil.calculateTotalPages(totalShowtimes, size);
-
-        List<Showtime> showtimes = showtimeRepository.findAllHistoryShowtimes(size, offset);
-
-        return ShowtimePageResponse.builder()
-                .showtimes(ShowtimeMapper.showtimeListToShowTimeListResponse(showtimes))
-                .currentPage(page)
-                .pageSize(size)
-                .totalElements(totalShowtimes)
-                .totalPages(totalPages)
-                .build();
-    }
-
-    @Override
-    @Transactional(readOnly = true)
     public ShowtimePageResponse getShowtimeBy(String date, String movieId, Integer page, Integer size) {
         int offset = PaginationUtil.calculateOffset(page, size);
         long totalShowtimes = showtimeRepository.countTotalFilteredShowtimes(
@@ -137,11 +119,10 @@ public class ShowtimeServiceImpl implements ShowtimeService {
 
     @Override
     @Transactional(readOnly = true)
-    public boolean checkIsShowtimeUpdateable(String id) {
+    public void checkIsShowtimeUpdateable(String id) {
         if (!showtimeRepository.isShowtimeUpdatable(UUID.fromString(id))) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Showtime is not updatable");
         }
-        return true;
     }
 
     @Override

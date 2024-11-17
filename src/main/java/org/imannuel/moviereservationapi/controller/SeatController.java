@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.imannuel.moviereservationapi.constant.Constant;
 import org.imannuel.moviereservationapi.dto.mapper.template.ApiMapper;
 import org.imannuel.moviereservationapi.dto.request.seat.SeatRequest;
 import org.imannuel.moviereservationapi.dto.response.Seat.SeatListResponse;
@@ -17,7 +18,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping(path = "/api/seats")
+@RequestMapping(path = Constant.SEATS_API)
 @RequiredArgsConstructor
 @Tag(name = "Seat Management", description = "API for managing movie seats")
 public class SeatController {
@@ -34,7 +35,7 @@ public class SeatController {
     )
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity createSeat(
+    public ResponseEntity<?> createSeat(
             @RequestBody SeatRequest seatRequest
     ) {
         seatService.createSeat(seatRequest);
@@ -50,7 +51,7 @@ public class SeatController {
             }
     )
     @GetMapping("/room/{id}")
-    public ResponseEntity getSeatByRoomId(
+    public ResponseEntity<?> getSeatByRoomId(
             @PathVariable(name = "id") Long id
     ) {
         SeatListResponse seats = seatService.findSeatByRoomId(id);
@@ -68,7 +69,7 @@ public class SeatController {
     )
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity updateSeat(
+    public ResponseEntity<?> updateSeat(
             @PathVariable(name = "id") String id,
             @RequestBody SeatRequest seatRequest
     ) {
@@ -86,7 +87,7 @@ public class SeatController {
     )
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity deleteSeat(
+    public ResponseEntity<?> deleteSeat(
             @PathVariable(name = "id") String id
     ) {
         seatService.deleteSeat(id);

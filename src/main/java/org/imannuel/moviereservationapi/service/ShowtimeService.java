@@ -17,11 +17,9 @@ public interface ShowtimeService {
 
     ShowtimePageResponse getAllShowtime(Integer page, Integer size);
 
-    ShowtimePageResponse getAllHistoryShowtime(Integer page, Integer size);
-
     ShowtimePageResponse getShowtimeBy(String date, String movieId, Integer page, Integer size);
 
-    boolean checkIsShowtimeUpdateable(String id);
+    void checkIsShowtimeUpdateable(String id);
 
     SeatListResponse getAvailableSeat(String showtimeId);
 

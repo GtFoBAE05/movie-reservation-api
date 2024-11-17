@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
+import org.imannuel.moviereservationapi.constant.Constant;
 import org.imannuel.moviereservationapi.dto.mapper.template.ApiMapper;
 import org.imannuel.moviereservationapi.dto.response.movie.MoviePageResponse;
 import org.imannuel.moviereservationapi.dto.response.movie.MovieResponse;
@@ -22,7 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 
 @RestController
-@RequestMapping(path = "/api/movies")
+@RequestMapping(path = Constant.MOVIES_API)
 @RequiredArgsConstructor
 @Tag(name = "Movie", description = "API for managing movies in the system.")
 public class MovieController {
@@ -40,12 +41,12 @@ public class MovieController {
     )
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity createMovie(
+    public ResponseEntity<?> createMovie(
             @RequestParam(name = "images", required = false) List<MultipartFile> multipartFiles,
             @Valid @NotBlank(message = "title is required") @RequestParam(name = "title") String title,
             @Valid @NotBlank(message = "description is required") @RequestParam(name = "description") String description,
             @Valid @NotBlank(message = "durationInMinute is required") @RequestParam(name = "durationInMinute") Integer durationInMinute,
-            @Valid @NotBlank(message = "genres is required") @RequestParam(name = "genres") List<Long>  genres,
+            @Valid @NotBlank(message = "genres is required") @RequestParam(name = "genres") List<Long> genres,
             @Valid @NotBlank(message = "releaseDate is required") @RequestParam(name = "releaseDate") String releaseDate
     ) {
         movieService.insertMovie(multipartFiles, title, description, durationInMinute, genres, releaseDate);
@@ -60,7 +61,7 @@ public class MovieController {
             }
     )
     @GetMapping
-    public ResponseEntity searchMovie(
+    public ResponseEntity<?> searchMovie(
             @RequestParam(value = "title", required = false) String title,
             @RequestParam(name = "page", required = false, defaultValue = "0") Integer page,
             @RequestParam(name = "size", required = false, defaultValue = "10") Integer size
@@ -80,7 +81,7 @@ public class MovieController {
             }
     )
     @GetMapping("/{id}")
-    public ResponseEntity getMovieById(
+    public ResponseEntity<?> getMovieById(
             @PathVariable("id") String id
     ) {
         MovieResponse movie = movieService.getMovieById(id);
@@ -100,13 +101,13 @@ public class MovieController {
     )
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity updateMovie(
+    public ResponseEntity<?> updateMovie(
             @PathVariable("id") String id,
             @RequestParam(name = "images", required = false) List<MultipartFile> multipartFiles,
             @Valid @NotBlank(message = "title is required") @RequestParam(name = "title") String title,
             @Valid @NotBlank(message = "description is required") @RequestParam(name = "description") String description,
             @Valid @NotBlank(message = "durationInMinute is required") @RequestParam(name = "durationInMinute") Integer durationInMinute,
-            @Valid @NotBlank(message = "genres is required") @RequestParam(name = "genres") List<Long>  genres,
+            @Valid @NotBlank(message = "genres is required") @RequestParam(name = "genres") List<Long> genres,
             @Valid @NotBlank(message = "releaseDate is required") @RequestParam(name = "releaseDate") String releaseDate
     ) {
         movieService.updateMovieById(id, multipartFiles, title, description, durationInMinute, genres, releaseDate);
@@ -123,7 +124,7 @@ public class MovieController {
     )
     @PutMapping("/images/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity updateMovieImage(
+    public ResponseEntity<?> updateMovieImage(
             @PathVariable("id") String id,
             @RequestParam(name = "images", required = false) MultipartFile multipartFile
     ) {
@@ -141,7 +142,7 @@ public class MovieController {
     )
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity deleteMovie(
+    public ResponseEntity<?> deleteMovie(
             @PathVariable("id") String id
     ) {
         movieService.deleteMovieById(id);
@@ -158,7 +159,7 @@ public class MovieController {
     )
     @DeleteMapping("/images/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity deleteMovieImage(
+    public ResponseEntity<?> deleteMovieImage(
             @PathVariable("id") String id
     ) {
         movieService.deleteMovieImage(id);

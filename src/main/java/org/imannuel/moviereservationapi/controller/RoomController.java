@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.imannuel.moviereservationapi.constant.Constant;
 import org.imannuel.moviereservationapi.dto.mapper.template.ApiMapper;
 import org.imannuel.moviereservationapi.dto.request.room.RoomRequest;
 import org.imannuel.moviereservationapi.dto.response.room.RoomPageResponse;
@@ -20,7 +21,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping(path = "/api/rooms")
+@RequestMapping(path = Constant.ROOMS_API)
 @RequiredArgsConstructor
 @Tag(name = "Room Management", description = "API for managing movie rooms.")
 public class RoomController {
@@ -37,7 +38,7 @@ public class RoomController {
     )
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity createRoom(
+    public ResponseEntity<?> createRoom(
             @RequestBody RoomRequest roomRequest
     ) {
         roomService.createRoom(roomRequest);
@@ -52,7 +53,7 @@ public class RoomController {
             }
     )
     @GetMapping
-    public ResponseEntity getAllRoom(
+    public ResponseEntity<?> getAllRoom(
             @RequestParam(name = "page", required = false, defaultValue = "0") Integer page,
             @RequestParam(name = "size", required = false, defaultValue = "10") Integer size
     ) {
@@ -70,7 +71,7 @@ public class RoomController {
             }
     )
     @GetMapping("/{id}")
-    public ResponseEntity getRoomById(
+    public ResponseEntity<?> getRoomById(
             @PathVariable("id") Long id
     ) {
         RoomResponse room = roomService.getRoomById(id);
@@ -88,7 +89,7 @@ public class RoomController {
     )
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity updateRoom(
+    public ResponseEntity<?> updateRoom(
             @PathVariable("id") Long id,
             @RequestBody RoomRequest roomRequest
     ) {
@@ -106,7 +107,7 @@ public class RoomController {
     )
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity deleteRoom(
+    public ResponseEntity<?> deleteRoom(
             @PathVariable("id") Long id
     ) {
         roomService.deleteRoom(id);

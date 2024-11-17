@@ -9,7 +9,7 @@ import org.springframework.http.ResponseEntity;
 import java.util.List;
 
 public class ApiMapper {
-    public static <T> ResponseEntity<ApiTemplateResponse> basicMapper(HttpStatus httpStatus, String message, T data) {
+    public static <T> ResponseEntity<?> basicMapper(HttpStatus httpStatus, String message, T data) {
         return ResponseEntity.status(httpStatus).body(
                 ApiTemplateResponse.builder()
                         .httpStatus(httpStatus.value())
@@ -20,7 +20,7 @@ public class ApiMapper {
         );
     }
 
-    public static <T> ResponseEntity<ApiTemplateResponse> paginationMapper(
+    public static <T> ResponseEntity<?> paginationMapper(
             HttpStatus httpStatus,
             String message,
             List<T> data,
@@ -56,5 +56,4 @@ public class ApiMapper {
                 .currentPage(currentPage)
                 .build();
     }
-
 }

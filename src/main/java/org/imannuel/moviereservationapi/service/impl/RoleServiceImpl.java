@@ -16,16 +16,16 @@ import org.springframework.web.server.ResponseStatusException;
 public class RoleServiceImpl implements RoleService {
     private final RoleRepository roleRepository;
 
-//    @PostConstruct
-//    @Transactional(rollbackFor = Exception.class)
-//    public void initRole() {
-//        for (RoleEnum value : RoleEnum.values()) {
-//            Boolean isRoleExist = checkIsRoleExist(value.name());
-//            if (!isRoleExist) {
-//                createRole(value.name());
-//            }
-//        }
-//    }
+    @PostConstruct
+    @Transactional(rollbackFor = Exception.class)
+    public void initRole() {
+        for (RoleEnum value : RoleEnum.values()) {
+            Boolean isRoleExist = checkIsRoleExist(value.name());
+            if (!isRoleExist) {
+                createRole(value.name());
+            }
+        }
+    }
 
     @Override
     public Boolean checkIsRoleExist(String name) {

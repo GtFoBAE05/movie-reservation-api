@@ -3,8 +3,9 @@
 
 # Technologies Used
 - Java 17
+- Java Stream
 - Spring boot
-- Spring JPA
+- Spring JPA (Native Query)
 - PostgreSQL
 - Spring Security
 - JWT

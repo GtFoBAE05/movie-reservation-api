@@ -39,5 +39,4 @@ public class Reservation {
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "payment_id")
     private Payment payment;
-
 }

@@ -89,10 +89,4 @@ public class MovieImageServiceImpl implements MovieImageService {
         return movieImageRepository.findById(UUID.fromString(id))
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Image not found"));
     }
-
-    @Override
-    @Transactional(readOnly = true)
-    public List<MovieImage> getAllMovieImageByMovieId(String id) {
-        return movieImageRepository.getAllMovieImageByMovieId(UUID.fromString(id));
-    }
 }

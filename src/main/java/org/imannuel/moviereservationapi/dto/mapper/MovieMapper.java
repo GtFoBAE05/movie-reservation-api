@@ -9,7 +9,7 @@ import java.util.List;
 public class MovieMapper {
     public static MovieResponse movieToMovieResponse(Movie movie) {
         List<GenreResponse> genreResponses = movie.getGenres().stream().map(
-                genre -> GenreMapper.genreToGenreResponse(genre)
+                GenreMapper::genreToGenreResponse
         ).toList();
         return MovieResponse.builder()
                 .id(movie.getId().toString())
@@ -24,7 +24,7 @@ public class MovieMapper {
 
     public static List<MovieResponse> movieListToMovieListResponse(List<Movie> movies) {
         return movies.stream().map(
-                movie -> movieToMovieResponse(movie)
+                MovieMapper::movieToMovieResponse
         ).toList();
     }
 }

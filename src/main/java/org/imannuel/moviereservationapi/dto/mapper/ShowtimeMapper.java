@@ -17,6 +17,6 @@ public class ShowtimeMapper {
     }
 
     public static List<ShowtimeResponse> showtimeListToShowTimeListResponse(List<Showtime> showtimes) {
-        return showtimes.stream().map(showtime -> showtimeToShowtimeResponse(showtime)).toList();
+        return showtimes.stream().map(ShowtimeMapper::showtimeToShowtimeResponse).toList();
     }
 }

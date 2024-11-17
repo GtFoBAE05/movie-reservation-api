@@ -48,7 +48,7 @@ public interface SeatRepository extends JpaRepository<Seat, UUID> {
             "WHERE ts.id = :showtimeId " +
             "AND NOT EXISTS (" +
             "SELECT 1 FROM t_seat_reservation sr " +
-            "WHERE sr.seat_id = s.id AND sr.reservation_id IS NOT NULL)",
+            "WHERE sr.seat_id = s.id)",
             nativeQuery = true)
     List<Seat> getAvailableSeat(@Param("showtimeId") UUID showtimeId);
 }

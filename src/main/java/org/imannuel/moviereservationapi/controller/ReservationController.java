@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.imannuel.moviereservationapi.constant.Constant;
 import org.imannuel.moviereservationapi.dto.mapper.template.ApiMapper;
 import org.imannuel.moviereservationapi.dto.request.reservation.ReservationRequest;
 import org.imannuel.moviereservationapi.dto.response.payment.PaymentResponse;
@@ -19,7 +20,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping(path = "/api/reservations")
+@RequestMapping(path = Constant.RESERVATIONS_API)
 @RequiredArgsConstructor
 @Tag(name = "Reservation Management", description = "API for managing movie reservations")
 public class ReservationController {
@@ -35,7 +36,7 @@ public class ReservationController {
             }
     )
     @PostMapping
-    public ResponseEntity createReservation(
+    public ResponseEntity<?> createReservation(
             @RequestBody ReservationRequest reservationRequest
     ) {
         PaymentResponse paymentResponse = reservationService.createReservation(reservationRequest);
@@ -53,7 +54,7 @@ public class ReservationController {
     )
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN') or (hasRole('USER') and @permissionEvaluationServiceImpl.hasAccessToReservation(#id, authentication.principal.id))")
-    public ResponseEntity cancelReservation(
+    public ResponseEntity<?> cancelReservation(
             @PathVariable("id") String id
     ) {
         reservationService.cancelReservation(id);
@@ -68,7 +69,7 @@ public class ReservationController {
             }
     )
     @GetMapping
-    public ResponseEntity getAllUserReservation(
+    public ResponseEntity<?> getAllUserReservation(
             @RequestParam(name = "page", required = false, defaultValue = "0") Integer page,
             @RequestParam(name = "size", required = false, defaultValue = "10") Integer size
     ) {
@@ -86,7 +87,7 @@ public class ReservationController {
             }
     )
     @GetMapping("/{id}")
-    public ResponseEntity getReservationById(
+    public ResponseEntity<?> getReservationById(
             @PathVariable("id") String id
     ) {
         ReservationResponse reservation = reservationService.getReservationById(id);

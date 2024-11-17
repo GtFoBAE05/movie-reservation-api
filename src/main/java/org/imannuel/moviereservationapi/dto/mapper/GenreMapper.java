@@ -7,12 +7,6 @@ import org.imannuel.moviereservationapi.entity.Genre;
 import java.util.List;
 
 public class GenreMapper {
-    public static Genre createGenreRequestToGenre(GenreRequest genreRequest) {
-        return Genre.builder()
-                .name(genreRequest.getName())
-                .build();
-    }
-
     public static GenreResponse genreToGenreResponse(Genre genre) {
         return GenreResponse.builder()
                 .id(genre.getId())

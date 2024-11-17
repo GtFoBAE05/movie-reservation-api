@@ -18,7 +18,7 @@ public class RoomMapper {
         return RoomResponse.builder()
                 .id(room.getId())
                 .name(room.getName())
-                .seats(room.getSeats().stream().map(seat -> SeatMapper.seatToSeatResponse(seat)).toList())
+                .seats(room.getSeats().stream().map(SeatMapper::seatToSeatResponse).toList())
                 .build();
     }
 
@@ -31,7 +31,7 @@ public class RoomMapper {
 
     public static List<RoomResponse> roomListToRoomListResponse(List<Room> rooms) {
         return rooms.stream().map(
-                room -> roomToRoomResponse(room)
+                RoomMapper::roomToRoomResponse
         ).toList();
     }
 }

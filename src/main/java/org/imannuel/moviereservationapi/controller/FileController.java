@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.imannuel.moviereservationapi.constant.Constant;
 import org.imannuel.moviereservationapi.dto.response.file.FileDownloadResponse;
 import org.imannuel.moviereservationapi.dto.response.template.ApiTemplateResponse;
 import org.imannuel.moviereservationapi.service.MovieImageService;
@@ -19,7 +20,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping(path = "/api/files")
+@RequestMapping(path = Constant.FILES_API)
 @RequiredArgsConstructor
 @Tag(name = "File", description = "APIs for file management, including image downloads for movies.")
 public class FileController {

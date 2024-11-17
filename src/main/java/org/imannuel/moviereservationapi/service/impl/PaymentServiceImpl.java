@@ -1,13 +1,11 @@
 package org.imannuel.moviereservationapi.service.impl;
 
-import lombok.extern.slf4j.Slf4j;
+import lombok.RequiredArgsConstructor;
 import org.imannuel.moviereservationapi.client.MidtransAppClient;
 import org.imannuel.moviereservationapi.constant.Constant;
-import org.imannuel.moviereservationapi.dto.mapper.PaymentMapper;
 import org.imannuel.moviereservationapi.dto.request.midtrans.*;
 import org.imannuel.moviereservationapi.dto.request.reservation.ReservationRequest;
 import org.imannuel.moviereservationapi.dto.response.midtrans.MidtransSnapResponse;
-import org.imannuel.moviereservationapi.dto.response.payment.PaymentResponse;
 import org.imannuel.moviereservationapi.entity.Payment;
 import org.imannuel.moviereservationapi.entity.PaymentStatus;
 import org.imannuel.moviereservationapi.entity.Reservation;
@@ -18,7 +16,6 @@ import org.imannuel.moviereservationapi.utils.HashUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import lombok.RequiredArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -30,7 +27,6 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
-@Slf4j
 public class PaymentServiceImpl implements PaymentService {
     private final PaymentRepository paymentRepository;
     private final MidtransAppClient midtransAppClient;
@@ -57,15 +53,7 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Override
     @Transactional(readOnly = true)
-    public Payment findPaymentById(String paymentId){
-        return paymentRepository.findPaymentById(UUID.fromString(paymentId))
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Payment not found"));
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public Payment findPaymentByReservationId(String paymentId){
-        log.info(paymentId);
+    public Payment findPaymentByReservationId(String paymentId) {
         return paymentRepository.findPaymentByReservationId(UUID.fromString(paymentId))
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Reservation not found"));
     }
@@ -77,7 +65,7 @@ public class PaymentServiceImpl implements PaymentService {
         PaymentStatus newPaymentStatus = paymentStatusService.findPaymentStatusByName(toPaymentStatus);
         payment.setPaymentStatus(newPaymentStatus);
 
-        if(newPaymentStatus.getName().equals("SETTLEMENT")){
+        if (newPaymentStatus.getName().equals("SETTLEMENT")) {
             payment.getReservation().setIsCancel(true);
         }
 
@@ -87,14 +75,11 @@ public class PaymentServiceImpl implements PaymentService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void receivePaymentNotification(MidtransNotificationRequest midtransNotificationRequest) {
-        log.info("Start getNotification: {}", System.currentTimeMillis());
         validateSignatureKey(midtransNotificationRequest.getOrderId(), midtransNotificationRequest.getStatusCode(), midtransNotificationRequest.getGrossAmount(), midtransNotificationRequest.getSignatureKey());
         updatePaymentStatus(midtransNotificationRequest.getOrderId(), midtransNotificationRequest.getTransactionStatus());
-        log.info("End getNotification: {}", System.currentTimeMillis());
-
     }
 
-    private MidtransSnapResponse buildMidtransPaymentRequest(Reservation reservation, ReservationRequest reservationRequest ){
+    private MidtransSnapResponse buildMidtransPaymentRequest(Reservation reservation, ReservationRequest reservationRequest) {
         List<MidtransItemDetailRequest> itemDetailRequests = List.of(
                 MidtransItemDetailRequest.builder()
                         .id(reservation.getShowtime().getId().toString())
@@ -123,21 +108,13 @@ public class PaymentServiceImpl implements PaymentService {
         return midtransAppClient.createSnapTransaction(paymentRequest, headerValue);
     }
 
-    private Long calculateReservationPrice(Reservation reservation, ReservationRequest reservationRequest){
+    private Long calculateReservationPrice(Reservation reservation, ReservationRequest reservationRequest) {
         return reservationRequest.getSeatId().size() * reservation.getShowtime().getPrice();
     }
 
     private void validateSignatureKey(String orderId, String statusCode, String grossAmount, String midtransSignatureKey) {
         String rawString = orderId + statusCode + grossAmount + MIDTRANS_SERVER_KEY;
-        log.info("0   "+ orderId);
-        log.info("0   "+ statusCode);
-        log.info("0   "+ grossAmount);
-        log.info("0   " + MIDTRANS_SERVER_KEY);
-
         String signatureKey = HashUtil.encryptMidtransKey(rawString);
-        log.info("1   "+ signatureKey);
-        log.info("2   "+ midtransSignatureKey);
-
         if (!signatureKey.equalsIgnoreCase(midtransSignatureKey)) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid signature key");
         }

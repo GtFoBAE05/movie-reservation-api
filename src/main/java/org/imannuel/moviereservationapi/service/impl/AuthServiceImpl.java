@@ -13,6 +13,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 
 @Service
@@ -24,6 +25,7 @@ public class AuthServiceImpl implements AuthService {
     private final ValidationUtil validationUtil;
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void register(RegisterRequest registerRequest) {
         validationUtil.validate(registerRequest);
 
@@ -36,6 +38,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public LoginResponse login(LoginRequest loginRequest) {
         validationUtil.validate(loginRequest);
 
